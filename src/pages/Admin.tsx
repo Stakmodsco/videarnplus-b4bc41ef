@@ -268,6 +268,7 @@ const AdminInvitePanel = ({ inviteCode, onRotated }: { inviteCode: string | unde
     </div>
   );
 };
+const Th = ({ children }: any) => <th className="text-left font-medium pb-2 px-2">{children}</th>;
 const Td = ({ children, className = "" }: any) => <td className={`py-3 px-2 ${className}`}>{children}</td>;
 const Pill = ({ children }: any) => <span className="ml-2 text-xs bg-primary/15 text-primary rounded-full px-2 py-0.5">{children}</span>;
 const Empty = ({ label }: { label: string }) => <div className="text-center text-muted-foreground py-12 text-sm">{label}</div>;
