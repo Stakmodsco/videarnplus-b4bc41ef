@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth, useIsAdmin } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Check, Eye, Flag, X } from "lucide-react";
+import { Check, Copy, Eye, Flag, RefreshCw, X } from "lucide-react";
 
 const Admin = () => {
   const { user, loading } = useAuth();
