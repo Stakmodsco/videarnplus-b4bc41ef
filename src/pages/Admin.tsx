@@ -102,13 +102,13 @@ const Admin = () => {
             <Card className="glass-card p-6 rounded-xl">
               {upgrades.length === 0 ? <Empty label="No upgrade requests yet" /> : (
                 <table className="w-full text-sm">
-                  <thead className="text-xs uppercase text-muted-foreground"><tr><Th>User</Th><Th>To</Th><Th>Amount</Th><Th>Method</Th><Th>Status</Th><Th>When</Th><Th /></tr></thead>
+                  <thead className="text-xs uppercase text-muted-foreground"><tr><Th>User</Th><Th>To</Th><Th>Amount</Th><Th>Method / Details</Th><Th>Status</Th><Th>When</Th><Th /></tr></thead>
                   <tbody>{upgrades.map((u) => (
-                    <tr key={u.id} className="border-t border-border">
+                    <tr key={u.id} className="border-t border-border align-top">
                       <Td><div>{u.profiles?.full_name || "—"}</div><div className="text-xs text-muted-foreground">{u.profiles?.email}</div></Td>
                       <Td>L{u.target_level}</Td>
                       <Td>${Number(u.amount).toFixed(2)}</Td>
-                      <Td className="capitalize">{u.payment_method}</Td>
+                      <Td className="max-w-sm"><PaymentDetails method={u.payment_method} notes={u.notes} /></Td>
                       <Td><StatusBadge status={u.status} /></Td>
                       <Td className="text-xs text-muted-foreground">{new Date(u.created_at).toLocaleString()}</Td>
                       <Td>
