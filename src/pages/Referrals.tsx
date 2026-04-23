@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Navigate, Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
+import { BottomNav } from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth, useProfile } from "@/hooks/useAuth";
@@ -98,6 +99,7 @@ const Referrals = () => {
           <Button asChild variant="outline"><Link to="/dashboard">← Dashboard</Link></Button>
         </div>
       </div>
+      <BottomNav />
     </div>
   );
 };

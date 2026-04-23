@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Navigate, Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
+import { BottomNav } from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
