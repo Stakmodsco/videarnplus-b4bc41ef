@@ -55,7 +55,7 @@ export function useProfile(userId: string | undefined) {
   useEffect(() => {
     if (!userId) return;
     const ch = supabase
-      .channel(`profile:${userId}`)
+      .channel(`profile:${userId}:${Math.random().toString(36).slice(2, 10)}`)
       .on("postgres_changes", { event: "UPDATE", schema: "public", table: "profiles", filter: `id=eq.${userId}` },
         (payload) => setProfile(payload.new as Profile))
       .subscribe();
