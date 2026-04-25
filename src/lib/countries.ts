@@ -108,7 +108,12 @@ const RAW: { code: string; name: string; scope?: "ZA" | "GH" }[] = [
 ];
 
 export const ALL_COUNTRIES: CountryEntry[] = RAW
-  .map((c) => ({ code: c.code, name: c.name, flag: flag(c.code), scope: c.scope ?? "INT" }))
+  .map<CountryEntry>((c) => ({
+    code: c.code,
+    name: c.name,
+    flag: flag(c.code),
+    scope: (c.scope ?? "INT") as "ZA" | "GH" | "INT",
+  }))
   .sort((a, b) => a.name.localeCompare(b.name));
 
 export const findCountryByCode = (code?: string | null): CountryEntry | null => {
