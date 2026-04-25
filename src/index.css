@@ -205,9 +205,28 @@
   .btn-press:hover {
     transform: translateY(-1px);
   }
-  .btn-press:active {
-    transform: translateY(0) scale(0.98);
+  /* Diagonal "UPGRADE" watermark used on locked Ways-to-Earn tiles. */
+  .upgrade-watermark {
+    position: relative;
+    overflow: hidden;
   }
+  .upgrade-watermark::before {
+    content: "UPGRADE";
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 700;
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    letter-spacing: 0.18em;
+    color: hsl(var(--primary) / 0.18);
+    transform: rotate(-18deg);
+    pointer-events: none;
+    text-shadow: 0 1px 0 hsl(var(--background) / 0.4);
+    z-index: 1;
+  }
+  .upgrade-watermark > * { position: relative; z-index: 2; }
 }
 
 @layer utilities {
