@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Navigate, Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
+import { BackButton } from "@/components/BackButton";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -57,6 +58,7 @@ const BecomeAdmin = () => {
     <div className="min-h-screen">
       <Navbar />
       <div className="container max-w-xl py-12">
+        <BackButton />
         <div className="text-xs uppercase tracking-widest text-primary mb-2">Admin access</div>
         <h1 className="font-display text-4xl font-semibold mb-2">Become an admin</h1>
         <p className="text-muted-foreground mb-8">Admins review upgrades, process withdrawals, and tune platform settings.</p>

@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useAuth, useProfile } from "@/hooks/useAuth";
+import { useCurrency } from "@/hooks/useCurrency";
+import { supabase } from "@/integrations/supabase/client";
 import { Crown, Sparkles, X } from "lucide-react";
 
 // Show every N ms while the user is logged in but not upgraded.
@@ -17,11 +19,21 @@ const UPGRADE_INTENT_KEY = "monetra:upgradeIntent";
 export const UpgradeNagModal = () => {
   const { user, loading } = useAuth();
   const { profile } = useProfile(user?.id);
+  const { format } = useCurrency();
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
+  const [prices, setPrices] = useState<Record<string, number>>({ "1": 25, "2": 50, "3": 100 });
   const nextAtRef = useRef<number>(Date.now() + NAG_INTERVAL_MS);
   const pausedRef = useRef(false);
+
+  // Pull live tier prices so the nag matches the real upgrade page.
+  useEffect(() => {
+    supabase.from("app_settings").select("value").eq("key", "level_prices").maybeSingle()
+      .then(({ data }) => {
+        if (data?.value) setPrices(data.value as Record<string, number>);
+      });
+  }, []);
 
   // The user is "in the upgrade flow" if they're on /upgrade or /payment/*.
   const onPaymentFlow = pathname.startsWith("/payment") || pathname === "/upgrade";
@@ -130,13 +142,13 @@ export const UpgradeNagModal = () => {
 
           <div className="mt-5 grid grid-cols-3 gap-2 text-center">
             {[
-              { label: "Silver", price: "$25" },
-              { label: "Gold", price: "$50" },
-              { label: "Platinum", price: "$100" },
+              { label: "Silver", level: "1" },
+              { label: "Gold", level: "2" },
+              { label: "Platinum", level: "3" },
             ].map((t) => (
               <div key={t.label} className="rounded-lg border border-border bg-secondary/40 p-3">
                 <div className="text-xs font-medium text-primary">{t.label}</div>
-                <div className="font-display text-lg font-semibold mt-1">{t.price}</div>
+                <div className="font-display text-lg font-semibold mt-1">{format(prices[t.level] ?? 0, { decimals: 0 })}</div>
               </div>
             ))}
           </div>

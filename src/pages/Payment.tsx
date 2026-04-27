@@ -10,10 +10,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth, useProfile } from "@/hooks/useAuth";
+import { useCurrency } from "@/hooks/useCurrency";
+import { useGeoCountry } from "@/hooks/useGeoCountry";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Bitcoin, Building2, Copy, Smartphone, Upload, ArrowLeft, Ticket, Send, Wallet, ShieldCheck, AlertCircle } from "lucide-react";
+import { Bitcoin, Building2, Copy, Smartphone, Upload, ArrowLeft, Ticket, Send, Wallet, ShieldCheck, AlertCircle, Search } from "lucide-react";
 import { COUNTRIES, type MethodDef, type FieldDef } from "@/lib/paymentMethods";
+import { ALL_COUNTRIES, scopeForCountry } from "@/lib/countries";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 
 type StructuredInstr = {
   amount_label?: string;
@@ -54,9 +59,13 @@ function validateField(field: FieldDef, raw: string): string | null {
 const Payment = () => {
   const { user, loading } = useAuth();
   const { profile } = useProfile(user?.id);
+  const { format, meta, setOverride } = useCurrency();
+  const { country: geoCountry } = useGeoCountry();
   const { level } = useParams();
   const targetLevel = Number(level);
   const [settings, setSettings] = useState<any>(null);
+  // ISO-2 of the country the user *says* they live in (drives currency + scope).
+  const [residenceCode, setResidenceCode] = useState<string>("");
   const [country, setCountry] = useState<string>("INT");
   const [method, setMethod] = useState<string>("bank");
   const [fields, setFields] = useState<Record<string, string>>({});
@@ -64,6 +73,7 @@ const Payment = () => {
   const [file, setFile] = useState<File | null>(null);
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [countryOpen, setCountryOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -72,11 +82,28 @@ const Payment = () => {
     });
   }, []);
 
+  // Auto-fill the residence selector from IP geolocation on first load.
+  useEffect(() => {
+    if (!residenceCode && geoCountry?.code) {
+      setResidenceCode(geoCountry.code);
+      setCountry(scopeForCountry(geoCountry.code));
+    }
+  }, [geoCountry, residenceCode]);
+
   const activeCountry = useMemo(() => COUNTRIES.find((c) => c.id === country) ?? COUNTRIES[0], [country]);
   const activeMethod = useMemo(
     () => activeCountry.methods.find((m) => m.id === method) ?? activeCountry.methods[0],
     [activeCountry, method],
   );
+
+  // Whenever the user picks a residence, also update the currency override
+  // and re-scope payment methods.
+  const onPickResidence = (code: string) => {
+    setResidenceCode(code);
+    setOverride(code);
+    setCountry(scopeForCountry(code));
+    setCountryOpen(false);
+  };
 
   // Reset method + fields whenever country changes — prevents method/country mismatch.
   useEffect(() => {
@@ -230,7 +257,8 @@ const Payment = () => {
         <div className="rounded-lg bg-primary/10 border border-primary/30 p-4 flex items-center justify-between">
           <div>
             <div className="text-xs text-primary/80 uppercase tracking-wide">Amount to pay</div>
-            <div className="font-display text-xl font-semibold">${usd.toFixed(2)} USD</div>
+            <div className="font-display text-xl font-semibold">{format(usd)}</div>
+            {meta.code !== "USD" && <div className="text-[11px] text-muted-foreground mt-0.5">≈ ${usd.toFixed(2)} USD</div>}
           </div>
           <Button size="sm" variant="ghost" onClick={() => copy(`${usd}`)}><Copy className="h-4 w-4" /></Button>
         </div>
@@ -253,7 +281,8 @@ const Payment = () => {
         <div className="rounded-lg bg-primary/10 border border-primary/30 p-4 flex items-center justify-between">
           <div>
             <div className="text-xs text-primary/80 uppercase tracking-wide">Amount to load</div>
-            <div className="font-display text-xl font-semibold">${usd.toFixed(2)} USD</div>
+            <div className="font-display text-xl font-semibold">{format(usd)}</div>
+            {meta.code !== "USD" && <div className="text-[11px] text-muted-foreground mt-0.5">≈ ${usd.toFixed(2)} USD</div>}
           </div>
           <Button size="sm" variant="ghost" onClick={() => copy(`${usd}`)}><Copy className="h-4 w-4" /></Button>
         </div>
@@ -319,42 +348,74 @@ const Payment = () => {
     <div className="min-h-screen mesh-bg">
       <Navbar />
       <div className="container max-w-2xl py-10">
-        <Button asChild variant="ghost" size="sm" className="mb-4"><Link to="/upgrade"><ArrowLeft className="h-4 w-4 mr-1" /> Change tier</Link></Button>
+        <div className="flex flex-wrap gap-2 mb-4">
+          <Button asChild variant="ghost" size="sm"><Link to="/dashboard"><ArrowLeft className="h-4 w-4 mr-1" /> Dashboard</Link></Button>
+          <Button asChild variant="ghost" size="sm"><Link to="/upgrade"><ArrowLeft className="h-4 w-4 mr-1" /> Change tier</Link></Button>
+        </div>
         <div className="text-xs uppercase tracking-widest text-primary mb-2">Complete your payment</div>
         <h1 className="font-display text-4xl font-semibold mb-2">Upgrade to {planName}</h1>
         <p className="text-muted-foreground mb-8">Pick your country, choose a payment method, then submit your details.</p>
 
         <Card className="glass-card p-6 rounded-xl text-center mb-6">
           <div className="text-xs uppercase tracking-wide text-muted-foreground">Plan: {planName}</div>
-          <div className="font-display text-5xl font-semibold mt-2">${usd}</div>
+          <div className="font-display text-5xl font-semibold mt-2">{format(usd, { decimals: 0 })}</div>
           <div className="text-xs text-muted-foreground mt-3">
             ≈ USD {usd.toFixed(0)}
             {localAmounts.map((a) => ` | ${a.code} ${a.value.toLocaleString(undefined, { maximumFractionDigits: 2 })}`)}
           </div>
         </Card>
 
-        {/* Country selector */}
+        {/* Residence selector — drives currency + payment scope */}
         <Card className="glass-card p-4 rounded-xl mb-4">
-          <Label className="text-xs uppercase tracking-wide text-muted-foreground">Your country</Label>
-          <div className="grid grid-cols-3 gap-2 mt-2">
-            {COUNTRIES.map((c) => (
+          <Label className="text-xs uppercase tracking-wide text-muted-foreground">Your country of residence</Label>
+          <Popover open={countryOpen} onOpenChange={setCountryOpen}>
+            <PopoverTrigger asChild>
               <button
-                key={c.id}
-                onClick={() => setCountry(c.id)}
-                className={`rounded-lg border px-3 py-3 text-sm font-medium transition-all btn-press ${
-                  country === c.id
-                    ? "border-primary bg-primary/10 text-primary shadow-emerald"
-                    : "border-border hover:border-primary/40 text-muted-foreground hover:text-foreground"
-                }`}
+                type="button"
+                className="mt-2 w-full flex items-center justify-between gap-2 rounded-lg border border-border bg-background px-3 h-11 text-sm hover:border-primary/40 transition-colors"
               >
-                <div className="text-2xl mb-1">{c.flag}</div>
-                {c.label}
+                {residenceCode ? (
+                  <span className="flex items-center gap-2">
+                    <span className="text-xl leading-none">
+                      {ALL_COUNTRIES.find((c) => c.code === residenceCode)?.flag}
+                    </span>
+                    <span className="font-medium">
+                      {ALL_COUNTRIES.find((c) => c.code === residenceCode)?.name}
+                    </span>
+                    <span className="text-xs text-muted-foreground ml-1">{meta.code}</span>
+                  </span>
+                ) : (
+                  <span className="text-muted-foreground">Select your country…</span>
+                )}
+                <Search className="h-4 w-4 text-muted-foreground" />
               </button>
-            ))}
-          </div>
-          <p className="text-[11px] text-muted-foreground mt-3 flex items-center gap-1">
+            </PopoverTrigger>
+            <PopoverContent className="p-0 w-[--radix-popover-trigger-width] max-h-[60vh]" align="start">
+              <Command>
+                <CommandInput placeholder="Search 240+ countries…" />
+                <CommandList>
+                  <CommandEmpty>No country found.</CommandEmpty>
+                  <CommandGroup>
+                    {ALL_COUNTRIES.map((c) => (
+                      <CommandItem
+                        key={c.code}
+                        value={`${c.name} ${c.code}`}
+                        onSelect={() => onPickResidence(c.code)}
+                      >
+                        <span className="text-xl mr-2 leading-none">{c.flag}</span>
+                        <span className="flex-1">{c.name}</span>
+                        <span className="text-xs text-muted-foreground">{c.code}</span>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+
+          <p className="text-[11px] text-muted-foreground mt-3 flex items-center gap-1.5">
             <ShieldCheck className="h-3 w-3 text-primary" />
-            Only methods available in <span className="font-medium text-foreground">{activeCountry.label}</span> can be submitted.
+            Showing payment methods available in <span className="font-medium text-foreground">{activeCountry.label}</span>. Currency displayed in <span className="font-medium text-foreground">{meta.code}</span>.
           </p>
         </Card>
 

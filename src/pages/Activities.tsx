@@ -5,7 +5,9 @@ import { BottomNav } from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth, useProfile } from "@/hooks/useAuth";
+import { useCurrency } from "@/hooks/useCurrency";
 import { supabase } from "@/integrations/supabase/client";
+import { BackButton } from "@/components/BackButton";
 import { toast } from "sonner";
 import {
   Calendar,
@@ -43,6 +45,7 @@ type Tile = {
 const Activities = () => {
   const { user, loading } = useAuth();
   const { profile, refresh } = useProfile(user?.id);
+  const { format } = useCurrency();
   const [settings, setSettings] = useState<Settings | null>(null);
   const [taskCounts, setTaskCounts] = useState<Record<string, number>>({});
   const [unlocks, setUnlocks] = useState<Set<string>>(new Set());
@@ -98,22 +101,22 @@ const Activities = () => {
 
   const tiles: Tile[] = [
     { id: "watch", icon: Play, title: "Watch & Earn",
-      subtitle: profile.level >= 1 ? `+ $${watchReward.toFixed(2)} • ${watchDone}/${watchLimit} today` : "Unlocks at Level 1",
+      subtitle: profile.level >= 1 ? `+ ${format(watchReward)} • ${watchDone}/${watchLimit} today` : "Unlocks at Level 1",
       unlockLevel: 1, action: "watch" },
     { id: "checkin", icon: Calendar, title: "Daily Check-in",
-      subtitle: canCheckin ? `+ $${checkinReward.toFixed(3)}` : "Available again in 24h",
+      subtitle: canCheckin ? `+ ${format(checkinReward, { decimals: 3 })}` : "Available again in 24h",
       unlockLevel: 0, action: "checkin" },
     { id: "spin", icon: Sparkles, title: "Spin & Win",
-      subtitle: profile.level >= 1 ? `+ $${spinReward.toFixed(2)} • ${spinDone}/${spinLimit} today` : "Unlocks at Level 1",
+      subtitle: profile.level >= 1 ? `+ ${format(spinReward)} • ${spinDone}/${spinLimit} today` : "Unlocks at Level 1",
       unlockLevel: 1, action: "spin" },
     { id: "hookup", icon: Link2, title: "Connect Tasks",
-      subtitle: "Partner integrations — unlock for $" + Number(fees.hookup ?? 0).toFixed(2),
+      subtitle: "Partner integrations — unlock for " + format(fees.hookup ?? 0),
       unlockLevel: 0, premium: true },
     { id: "vip", icon: Crown, title: "VIP Stream",
-      subtitle: "Premium tasks — unlock for $" + Number(fees.vip ?? 0).toFixed(2),
+      subtitle: "Premium tasks — unlock for " + format(fees.vip ?? 0),
       unlockLevel: 0, premium: true },
     { id: "creator", icon: UserPlus, title: "Become a Creator",
-      subtitle: "Apply to publish tasks — unlock for $" + Number(fees.creator ?? 0).toFixed(2),
+      subtitle: "Apply to publish tasks — unlock for " + format(fees.creator ?? 0),
       unlockLevel: 0, premium: true },
   ];
 
@@ -125,7 +128,7 @@ const Activities = () => {
       const { data, error } = await supabase.functions.invoke(fn, { body });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
-      toast.success(data?.reward ? `+ $${Number(data.reward).toFixed(2)} earned` : "Done");
+      toast.success(data?.reward ? `+ ${format(data.reward)} earned` : "Done");
       await Promise.all([refresh(), loadCounts()]);
     } catch (e: any) {
       toast.error(e.message ?? "Failed");
@@ -144,7 +147,7 @@ const Activities = () => {
     // Premium tile that hasn't been individually unlocked yet
     if (t.premium && !isPremiumUnlocked(t.id)) {
       const fee = Number(fees[t.id] ?? 0);
-      if (!confirm(`Unlock "${t.title}" for $${fee.toFixed(2)} from your balance?`)) return;
+      if (!confirm(`Unlock "${t.title}" for ${format(fee)} from your balance?`)) return;
       invokeFn("unlock-tile", { tile_id: t.id });
       return;
     }
@@ -169,6 +172,7 @@ const Activities = () => {
     <div className="min-h-screen">
       <Navbar />
       <div className="container py-10 max-w-5xl">
+        <BackButton />
         <div className="text-xs uppercase tracking-widest text-primary mb-2">Activities</div>
         <h1 className="font-display text-4xl font-semibold mb-2">Ways to earn</h1>
         <p className="text-muted-foreground mb-8">
@@ -229,7 +233,7 @@ const Activities = () => {
                   {nextTask.description && <div className="text-xs text-muted-foreground">{nextTask.description}</div>}
                 </div>
                 <div className="text-right">
-                  <div className="text-primary font-semibold tabular-nums text-sm">+ ${Number(nextTask.reward).toFixed(2)}</div>
+                  <div className="text-primary font-semibold tabular-nums text-sm">+ {format(nextTask.reward)}</div>
                   <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{nextTask.task_type}</div>
                 </div>
               </div>

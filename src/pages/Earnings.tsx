@@ -6,12 +6,15 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useAuth, useProfile } from "@/hooks/useAuth";
+import { useCurrency } from "@/hooks/useCurrency";
 import { supabase } from "@/integrations/supabase/client";
+import { BackButton } from "@/components/BackButton";
 import { Coins, Lock, TrendingUp, Wallet } from "lucide-react";
 
 const Earnings = () => {
   const { user, loading } = useAuth();
   const { profile } = useProfile(user?.id);
+  const { format } = useCurrency();
   const [settings, setSettings] = useState<any>(null);
   const [txns, setTxns] = useState<any[]>([]);
 
@@ -41,13 +44,14 @@ const Earnings = () => {
     <div className="min-h-screen">
       <Navbar />
       <div className="container max-w-4xl py-10">
+        <BackButton />
         <div className="text-xs uppercase tracking-widest text-primary mb-2">Earnings</div>
         <h1 className="font-display text-4xl font-semibold mb-8">Your earnings</h1>
 
         <div className="grid sm:grid-cols-3 gap-4 mb-6">
-          <BalanceCard icon={Wallet} label="Available" value={profile.balance} accent />
-          <BalanceCard icon={Lock} label="Locked" value={profile.locked_balance} />
-          <BalanceCard icon={TrendingUp} label="Total earned" value={profile.total_earnings} />
+          <BalanceCard icon={Wallet} label="Available" value={profile.balance} accent format={format} />
+          <BalanceCard icon={Lock} label="Locked" value={profile.locked_balance} format={format} />
+          <BalanceCard icon={TrendingUp} label="Total earned" value={profile.total_earnings} format={format} />
         </div>
 
         <Card className="glass-card p-6 rounded-xl mb-6">
@@ -57,8 +61,8 @@ const Earnings = () => {
               <div className="text-xs text-muted-foreground">Resets at 00:00 UTC</div>
             </div>
             <div className="text-sm tabular-nums">
-              <span className="font-semibold">${earnedToday.toFixed(2)}</span>
-              <span className="text-muted-foreground"> / ${cap.toFixed(2)}</span>
+              <span className="font-semibold">{format(earnedToday)}</span>
+              <span className="text-muted-foreground"> / {format(cap)}</span>
             </div>
           </div>
           <Progress value={capPct} className="h-2" />
@@ -87,7 +91,7 @@ const Earnings = () => {
                   </div>
                   <div className="flex items-center gap-3">
                     <span className={`tabular-nums font-medium ${t.type === "withdrawal" ? "text-warning" : "text-primary"}`}>
-                      {t.type === "withdrawal" ? "−" : "+"}${Number(t.amount).toFixed(2)}
+                      {t.type === "withdrawal" ? "−" : "+"}{format(t.amount)}
                     </span>
                     <StatusBadge status={t.status} />
                   </div>
@@ -102,10 +106,10 @@ const Earnings = () => {
   );
 };
 
-const BalanceCard = ({ icon: Icon, label, value, accent }: any) => (
+const BalanceCard = ({ icon: Icon, label, value, accent, format }: any) => (
   <Card className={`glass-card p-6 rounded-xl ${accent ? "ring-1 ring-primary/30" : ""}`}>
     <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2"><Icon className="h-3.5 w-3.5" />{label}</div>
-    <div className="font-display text-3xl font-semibold tabular-nums">${Number(value).toFixed(2)}</div>
+    <div className="font-display text-3xl font-semibold tabular-nums">{format(value)}</div>
   </Card>
 );
 
