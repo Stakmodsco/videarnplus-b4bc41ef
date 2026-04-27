@@ -58,6 +58,7 @@ const BecomeAdmin = () => {
     <div className="min-h-screen">
       <Navbar />
       <div className="container max-w-xl py-12">
+        <BackButton />
         <div className="text-xs uppercase tracking-widest text-primary mb-2">Admin access</div>
         <h1 className="font-display text-4xl font-semibold mb-2">Become an admin</h1>
         <p className="text-muted-foreground mb-8">Admins review upgrades, process withdrawals, and tune platform settings.</p>
