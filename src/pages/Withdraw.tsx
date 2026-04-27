@@ -48,7 +48,7 @@ const Withdraw = () => {
     if (isLocked) return toast.error(`Withdrawals are available ${lockDays} days after your deposit. Try again in ${daysLeft} day${daysLeft === 1 ? "" : "s"}.`);
     const amt = Number(amount);
     if (!Number.isFinite(amt) || amt <= 0) return toast.error("Enter a valid amount");
-    if (amt < min) return toast.error(`Minimum is $${min}`);
+    if (amt < min) return toast.error(`Minimum is ${format(min)}`);
     if (amt > Number(profile.balance)) return toast.error("Insufficient balance");
     if (!details.trim()) return toast.error("Add payout details");
     setSubmitting(true);
@@ -71,22 +71,26 @@ const Withdraw = () => {
     <div className="min-h-screen">
       <Navbar />
       <div className="container max-w-2xl py-10">
+        <BackButton />
         <div className="text-xs uppercase tracking-widest text-primary mb-2">Withdrawal</div>
         <h1 className="font-display text-4xl font-semibold mb-2">Request a payout</h1>
         <p className="text-muted-foreground mb-8">
-          Minimum ${min}. Your daily cap at Level {profile.level} is ${cap}. Funds move to <em>Locked</em> instantly and are released after admin review.
+          Minimum {format(min)}. Your daily cap at Level {profile.level} is {format(cap)}. Funds move to <em>Locked</em> instantly and are released after admin review.
         </p>
 
         <Card className="glass-card p-6 rounded-xl space-y-5">
           <div>
             <Label className="text-xs uppercase tracking-wide text-muted-foreground">Available balance</Label>
-            <div className="font-display text-3xl mt-1 tabular-nums">${Number(profile.balance).toFixed(2)}</div>
+            <div className="font-display text-3xl mt-1 tabular-nums">{format(profile.balance)}</div>
           </div>
 
           <div>
             <Label className="text-xs uppercase tracking-wide text-muted-foreground">Amount (USD)</Label>
             <Input type="number" step="0.01" min={min} max={Math.min(cap, Number(profile.balance))}
               value={amount} onChange={(e) => setAmount(e.target.value)} placeholder={`min ${min}`} className="mt-2 text-lg" />
+            {meta.code !== "USD" && amount && Number(amount) > 0 && (
+              <div className="text-xs text-muted-foreground mt-1.5">≈ {format(Number(amount))} in {meta.code}</div>
+            )}
           </div>
 
           <div>
