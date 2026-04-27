@@ -5,14 +5,15 @@ import { BottomNav } from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth, useProfile } from "@/hooks/useAuth";
+import { useCurrency } from "@/hooks/useCurrency";
 import { supabase } from "@/integrations/supabase/client";
 import { GlossyTile } from "@/components/GlossyTile";
 import { Gem, ShieldCheck, ArrowLeft, Clock, CheckCircle2, XCircle } from "lucide-react";
 
 const TIERS = [
-  { level: 1, name: "Silver", features: ["Watch & Earn unlocked", "Spin & Win unlocked", "Standard withdrawal speed", "Daily earning limit: $5", "Community access"] },
-  { level: 2, name: "Gold", popular: true, features: ["All Silver features", "Faster withdrawals (within 24h)", "Daily earning limit: $15", "Referral commission boost", "Monthly bonus rewards"] },
-  { level: 3, name: "Platinum", features: ["All Gold features", "Priority withdrawal review", "Daily earning limit: $40", "VIP community access", "Exclusive tasks"] },
+  { level: 1, name: "Silver", features: ["Watch & Earn unlocked", "Spin & Win unlocked", "Standard withdrawal speed", "Daily earning limit", "Community access"] },
+  { level: 2, name: "Gold", popular: true, features: ["All Silver features", "Faster withdrawals (within 24h)", "Higher daily earning limit", "Referral commission boost", "Monthly bonus rewards"] },
+  { level: 3, name: "Platinum", features: ["All Gold features", "Priority withdrawal review", "Maximum daily earning limit", "VIP community access", "Exclusive tasks"] },
 ];
 
 type LatestUpgrade = {
@@ -26,6 +27,7 @@ type LatestUpgrade = {
 const Upgrade = () => {
   const { user, loading } = useAuth();
   const { profile } = useProfile(user?.id);
+  const { format, meta } = useCurrency();
   const [settings, setSettings] = useState<any>(null);
   const [latest, setLatest] = useState<LatestUpgrade | null>(null);
 
@@ -100,7 +102,8 @@ const Upgrade = () => {
                 )}
                 <GlossyTile icon={Gem} variant="primary" size="md" className="mb-4" />
                 <div className="font-display text-xl font-semibold">{t.name}</div>
-                <div className="font-display text-4xl font-semibold mt-2">${usd.toFixed(2)}</div>
+                <div className="font-display text-4xl font-semibold mt-2">{format(usd)}</div>
+                {meta.code !== "USD" && <div className="text-xs text-muted-foreground mt-1">≈ ${usd.toFixed(2)} USD</div>}
                 <ul className="mt-5 space-y-2 text-sm text-muted-foreground flex-1">
                   {t.features.map((f) => (
                     <li key={f} className="flex gap-2"><span className="text-primary">✓</span>{f}</li>
