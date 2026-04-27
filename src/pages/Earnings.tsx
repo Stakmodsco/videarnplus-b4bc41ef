@@ -61,8 +61,8 @@ const Earnings = () => {
               <div className="text-xs text-muted-foreground">Resets at 00:00 UTC</div>
             </div>
             <div className="text-sm tabular-nums">
-              <span className="font-semibold">${earnedToday.toFixed(2)}</span>
-              <span className="text-muted-foreground"> / ${cap.toFixed(2)}</span>
+              <span className="font-semibold">{format(earnedToday)}</span>
+              <span className="text-muted-foreground"> / {format(cap)}</span>
             </div>
           </div>
           <Progress value={capPct} className="h-2" />
@@ -91,7 +91,7 @@ const Earnings = () => {
                   </div>
                   <div className="flex items-center gap-3">
                     <span className={`tabular-nums font-medium ${t.type === "withdrawal" ? "text-warning" : "text-primary"}`}>
-                      {t.type === "withdrawal" ? "−" : "+"}${Number(t.amount).toFixed(2)}
+                      {t.type === "withdrawal" ? "−" : "+"}{format(t.amount)}
                     </span>
                     <StatusBadge status={t.status} />
                   </div>
@@ -106,10 +106,10 @@ const Earnings = () => {
   );
 };
 
-const BalanceCard = ({ icon: Icon, label, value, accent }: any) => (
+const BalanceCard = ({ icon: Icon, label, value, accent, format }: any) => (
   <Card className={`glass-card p-6 rounded-xl ${accent ? "ring-1 ring-primary/30" : ""}`}>
     <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2"><Icon className="h-3.5 w-3.5" />{label}</div>
-    <div className="font-display text-3xl font-semibold tabular-nums">${Number(value).toFixed(2)}</div>
+    <div className="font-display text-3xl font-semibold tabular-nums">{format(value)}</div>
   </Card>
 );
 
