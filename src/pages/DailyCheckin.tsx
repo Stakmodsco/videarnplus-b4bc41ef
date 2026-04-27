@@ -5,14 +5,17 @@ import { BottomNav } from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth, useProfile } from "@/hooks/useAuth";
+import { useCurrency } from "@/hooks/useCurrency";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Calendar, CheckCircle2, Clock, Sparkles } from "lucide-react";
 import { GlossyTile } from "@/components/GlossyTile";
+import { BackButton } from "@/components/BackButton";
 
 const DailyCheckin = () => {
   const { user, loading } = useAuth();
   const { profile, refresh } = useProfile(user?.id);
+  const { format } = useCurrency();
   const [reward, setReward] = useState<number>(0);
   const [busy, setBusy] = useState(false);
   const navigate = useNavigate();
@@ -44,7 +47,7 @@ const DailyCheckin = () => {
       const { data, error } = await supabase.functions.invoke("checkin");
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
-      toast.success(`Daily check-in done! +$${Number(data.reward ?? 0).toFixed(3)} added to your balance 🎉`);
+      toast.success(`Daily check-in done! +${format(data.reward ?? 0, { decimals: 3 })} added to your balance 🎉`);
       await refresh();
       // Brief delay so the toast is visible, then redirect to dashboard
       setTimeout(() => navigate("/dashboard"), 900);
@@ -65,11 +68,12 @@ const DailyCheckin = () => {
       </div>
 
       <div className="container max-w-3xl py-10 -mt-6">
+        <BackButton />
         {/* Reward card */}
         <Card className="glass-card rounded-2xl p-8 text-center shadow-xl">
           <h2 className="font-display text-2xl font-semibold mb-3">Daily Check-in Reward</h2>
           <div className="font-display text-5xl font-semibold text-primary tabular-nums mb-3">
-            ${reward.toFixed(3)}
+            {format(reward, { decimals: 3 })}
           </div>
           <p className="text-sm text-muted-foreground mb-6">
             Check in once every 24 hours to receive your daily reward.<br />
