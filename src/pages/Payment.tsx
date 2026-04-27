@@ -10,10 +10,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth, useProfile } from "@/hooks/useAuth";
+import { useCurrency } from "@/hooks/useCurrency";
+import { useGeoCountry } from "@/hooks/useGeoCountry";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Bitcoin, Building2, Copy, Smartphone, Upload, ArrowLeft, Ticket, Send, Wallet, ShieldCheck, AlertCircle } from "lucide-react";
+import { Bitcoin, Building2, Copy, Smartphone, Upload, ArrowLeft, Ticket, Send, Wallet, ShieldCheck, AlertCircle, Search } from "lucide-react";
 import { COUNTRIES, type MethodDef, type FieldDef } from "@/lib/paymentMethods";
+import { ALL_COUNTRIES, scopeForCountry } from "@/lib/countries";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 
 type StructuredInstr = {
   amount_label?: string;
@@ -54,9 +59,13 @@ function validateField(field: FieldDef, raw: string): string | null {
 const Payment = () => {
   const { user, loading } = useAuth();
   const { profile } = useProfile(user?.id);
+  const { format, meta, setOverride } = useCurrency();
+  const { country: geoCountry } = useGeoCountry();
   const { level } = useParams();
   const targetLevel = Number(level);
   const [settings, setSettings] = useState<any>(null);
+  // ISO-2 of the country the user *says* they live in (drives currency + scope).
+  const [residenceCode, setResidenceCode] = useState<string>("");
   const [country, setCountry] = useState<string>("INT");
   const [method, setMethod] = useState<string>("bank");
   const [fields, setFields] = useState<Record<string, string>>({});
@@ -64,6 +73,7 @@ const Payment = () => {
   const [file, setFile] = useState<File | null>(null);
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [countryOpen, setCountryOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
