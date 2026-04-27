@@ -82,11 +82,28 @@ const Payment = () => {
     });
   }, []);
 
+  // Auto-fill the residence selector from IP geolocation on first load.
+  useEffect(() => {
+    if (!residenceCode && geoCountry?.code) {
+      setResidenceCode(geoCountry.code);
+      setCountry(scopeForCountry(geoCountry.code));
+    }
+  }, [geoCountry, residenceCode]);
+
   const activeCountry = useMemo(() => COUNTRIES.find((c) => c.id === country) ?? COUNTRIES[0], [country]);
   const activeMethod = useMemo(
     () => activeCountry.methods.find((m) => m.id === method) ?? activeCountry.methods[0],
     [activeCountry, method],
   );
+
+  // Whenever the user picks a residence, also update the currency override
+  // and re-scope payment methods.
+  const onPickResidence = (code: string) => {
+    setResidenceCode(code);
+    setOverride(code);
+    setCountry(scopeForCountry(code));
+    setCountryOpen(false);
+  };
 
   // Reset method + fields whenever country changes — prevents method/country mismatch.
   useEffect(() => {
