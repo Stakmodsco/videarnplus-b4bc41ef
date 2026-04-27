@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useAuth, useProfile } from "@/hooks/useAuth";
+import { useCurrency } from "@/hooks/useCurrency";
 import { supabase } from "@/integrations/supabase/client";
 import {
   ArrowUpRight,
@@ -39,6 +40,7 @@ type Settings = {
 const Dashboard = () => {
   const { user, loading } = useAuth();
   const { profile } = useProfile(user?.id);
+  const { format, meta } = useCurrency();
   const [settings, setSettings] = useState<Settings | null>(null);
   const [showBalance, setShowBalance] = useState(true);
   const [streak, setStreak] = useState(0);
@@ -120,7 +122,7 @@ const Dashboard = () => {
             <div>
               <div className="text-xs uppercase tracking-widest opacity-80">Balance</div>
               <div className="font-display text-5xl font-semibold mt-2 tabular-nums">
-                {showBalance ? `$${Number(profile.balance).toFixed(2)}` : "$ • • • •"}
+                {showBalance ? format(profile.balance) : `${meta.symbol} • • • •`}
               </div>
             </div>
             <button onClick={() => setShowBalance((v) => !v)} className="h-10 w-10 grid place-items-center rounded-lg bg-primary-foreground/15 hover:bg-primary-foreground/25 transition-colors" aria-label="Toggle balance">
@@ -131,7 +133,7 @@ const Dashboard = () => {
           <div className="mt-6">
             <div className="flex items-center justify-between text-xs opacity-90 mb-2">
               <span>Account Level: {profile.level}</span>
-              <span className="tabular-nums">${earnedToday.toFixed(2)} / ${cap.toFixed(2)} today</span>
+              <span className="tabular-nums">{format(earnedToday)} / {format(cap)} today</span>
             </div>
             <div className="h-2 rounded-full bg-primary-foreground/20 overflow-hidden">
               <div className="h-full bg-primary-foreground/80 transition-all" style={{ width: `${capPct}%` }} />
@@ -147,8 +149,8 @@ const Dashboard = () => {
 
         {/* Stats row */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5">
-          <MiniStat icon={Wallet} label="Locked" value={`$${Number(profile.locked_balance).toFixed(2)}`} />
-          <MiniStat icon={TrendingUp} label="Total earned" value={`$${Number(profile.total_earnings).toFixed(2)}`} />
+          <MiniStat icon={Wallet} label="Locked" value={format(profile.locked_balance)} />
+          <MiniStat icon={TrendingUp} label="Total earned" value={format(profile.total_earnings)} />
           <MiniStat icon={Users} label="Referral code" value={profile.referral_code} mono className="col-span-2 sm:col-span-1" />
         </div>
 
