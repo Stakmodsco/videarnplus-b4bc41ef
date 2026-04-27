@@ -5,13 +5,16 @@ import { BottomNav } from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { useCurrency } from "@/hooks/useCurrency";
 import { supabase } from "@/integrations/supabase/client";
+import { BackButton } from "@/components/BackButton";
 import { Calendar, CheckCircle2, Circle } from "lucide-react";
 
 type Row = { reward: number; completed_at: string };
 
 const CheckinHistory = () => {
   const { user, loading } = useAuth();
+  const { format } = useCurrency();
   const [rows, setRows] = useState<Row[]>([]);
 
   useEffect(() => {
@@ -51,13 +54,14 @@ const CheckinHistory = () => {
     <div className="min-h-screen">
       <Navbar />
       <div className="container py-10 max-w-4xl">
+        <BackButton />
         <div className="text-xs uppercase tracking-widest text-primary mb-2">Check-in history</div>
         <h1 className="font-display text-4xl font-semibold mb-8">Last 30 days</h1>
 
         <div className="grid md:grid-cols-3 gap-4 mb-6">
           <Stat label="Days claimed" value={`${claimedCount} / 30`} />
           <Stat label="Current streak" value={`${streak} day${streak === 1 ? "" : "s"}`} accent />
-          <Stat label="Earned from check-ins" value={`$${totalEarned.toFixed(2)}`} />
+          <Stat label="Earned from check-ins" value={format(totalEarned)} />
         </div>
 
         <Card className="glass-card p-6 rounded-xl mb-6">

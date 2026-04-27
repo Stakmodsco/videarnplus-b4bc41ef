@@ -57,7 +57,7 @@ const Receipts = () => {
             ))}
           </div>
           <div className="text-sm text-muted-foreground">
-            {filtered.length} entries • <span className="text-primary font-medium">${total.toFixed(2)}</span> credited
+            {filtered.length} entries • <span className="text-primary font-medium">{format(total)}</span> credited
           </div>
         </div>
 
@@ -73,7 +73,7 @@ const Receipts = () => {
                 <div key={day}>
                   <div className="flex items-center justify-between mb-2 px-1">
                     <div className="text-xs uppercase tracking-wider text-muted-foreground">{day}</div>
-                    <div className="text-xs text-primary tabular-nums">+ ${dayTotal.toFixed(2)}</div>
+                    <div className="text-xs text-primary tabular-nums">+ {format(dayTotal)}</div>
                   </div>
                   <Card className="glass-card rounded-xl divide-y divide-border">
                     {items.map((r, i) => {
@@ -97,7 +97,7 @@ const Receipts = () => {
                             </div>
                           </div>
                           <div className="text-right">
-                            <div className="tabular-nums text-primary font-medium">+ ${Number(r.reward).toFixed(2)}</div>
+                            <div className="tabular-nums text-primary font-medium">+ {format(r.reward)}</div>
                             <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Server-validated · #{r.id.slice(0, 6)}</div>
                           </div>
                         </div>
