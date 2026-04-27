@@ -257,7 +257,8 @@ const Payment = () => {
         <div className="rounded-lg bg-primary/10 border border-primary/30 p-4 flex items-center justify-between">
           <div>
             <div className="text-xs text-primary/80 uppercase tracking-wide">Amount to pay</div>
-            <div className="font-display text-xl font-semibold">${usd.toFixed(2)} USD</div>
+            <div className="font-display text-xl font-semibold">{format(usd)}</div>
+            {meta.code !== "USD" && <div className="text-[11px] text-muted-foreground mt-0.5">≈ ${usd.toFixed(2)} USD</div>}
           </div>
           <Button size="sm" variant="ghost" onClick={() => copy(`${usd}`)}><Copy className="h-4 w-4" /></Button>
         </div>
@@ -280,7 +281,8 @@ const Payment = () => {
         <div className="rounded-lg bg-primary/10 border border-primary/30 p-4 flex items-center justify-between">
           <div>
             <div className="text-xs text-primary/80 uppercase tracking-wide">Amount to load</div>
-            <div className="font-display text-xl font-semibold">${usd.toFixed(2)} USD</div>
+            <div className="font-display text-xl font-semibold">{format(usd)}</div>
+            {meta.code !== "USD" && <div className="text-[11px] text-muted-foreground mt-0.5">≈ ${usd.toFixed(2)} USD</div>}
           </div>
           <Button size="sm" variant="ghost" onClick={() => copy(`${usd}`)}><Copy className="h-4 w-4" /></Button>
         </div>
@@ -346,42 +348,74 @@ const Payment = () => {
     <div className="min-h-screen mesh-bg">
       <Navbar />
       <div className="container max-w-2xl py-10">
-        <Button asChild variant="ghost" size="sm" className="mb-4"><Link to="/upgrade"><ArrowLeft className="h-4 w-4 mr-1" /> Change tier</Link></Button>
+        <div className="flex flex-wrap gap-2 mb-4">
+          <Button asChild variant="ghost" size="sm"><Link to="/dashboard"><ArrowLeft className="h-4 w-4 mr-1" /> Dashboard</Link></Button>
+          <Button asChild variant="ghost" size="sm"><Link to="/upgrade"><ArrowLeft className="h-4 w-4 mr-1" /> Change tier</Link></Button>
+        </div>
         <div className="text-xs uppercase tracking-widest text-primary mb-2">Complete your payment</div>
         <h1 className="font-display text-4xl font-semibold mb-2">Upgrade to {planName}</h1>
         <p className="text-muted-foreground mb-8">Pick your country, choose a payment method, then submit your details.</p>
 
         <Card className="glass-card p-6 rounded-xl text-center mb-6">
           <div className="text-xs uppercase tracking-wide text-muted-foreground">Plan: {planName}</div>
-          <div className="font-display text-5xl font-semibold mt-2">${usd}</div>
+          <div className="font-display text-5xl font-semibold mt-2">{format(usd, { decimals: 0 })}</div>
           <div className="text-xs text-muted-foreground mt-3">
             ≈ USD {usd.toFixed(0)}
             {localAmounts.map((a) => ` | ${a.code} ${a.value.toLocaleString(undefined, { maximumFractionDigits: 2 })}`)}
           </div>
         </Card>
 
-        {/* Country selector */}
+        {/* Residence selector — drives currency + payment scope */}
         <Card className="glass-card p-4 rounded-xl mb-4">
-          <Label className="text-xs uppercase tracking-wide text-muted-foreground">Your country</Label>
-          <div className="grid grid-cols-3 gap-2 mt-2">
-            {COUNTRIES.map((c) => (
+          <Label className="text-xs uppercase tracking-wide text-muted-foreground">Your country of residence</Label>
+          <Popover open={countryOpen} onOpenChange={setCountryOpen}>
+            <PopoverTrigger asChild>
               <button
-                key={c.id}
-                onClick={() => setCountry(c.id)}
-                className={`rounded-lg border px-3 py-3 text-sm font-medium transition-all btn-press ${
-                  country === c.id
-                    ? "border-primary bg-primary/10 text-primary shadow-emerald"
-                    : "border-border hover:border-primary/40 text-muted-foreground hover:text-foreground"
-                }`}
+                type="button"
+                className="mt-2 w-full flex items-center justify-between gap-2 rounded-lg border border-border bg-background px-3 h-11 text-sm hover:border-primary/40 transition-colors"
               >
-                <div className="text-2xl mb-1">{c.flag}</div>
-                {c.label}
+                {residenceCode ? (
+                  <span className="flex items-center gap-2">
+                    <span className="text-xl leading-none">
+                      {ALL_COUNTRIES.find((c) => c.code === residenceCode)?.flag}
+                    </span>
+                    <span className="font-medium">
+                      {ALL_COUNTRIES.find((c) => c.code === residenceCode)?.name}
+                    </span>
+                    <span className="text-xs text-muted-foreground ml-1">{meta.code}</span>
+                  </span>
+                ) : (
+                  <span className="text-muted-foreground">Select your country…</span>
+                )}
+                <Search className="h-4 w-4 text-muted-foreground" />
               </button>
-            ))}
-          </div>
-          <p className="text-[11px] text-muted-foreground mt-3 flex items-center gap-1">
+            </PopoverTrigger>
+            <PopoverContent className="p-0 w-[--radix-popover-trigger-width] max-h-[60vh]" align="start">
+              <Command>
+                <CommandInput placeholder="Search 240+ countries…" />
+                <CommandList>
+                  <CommandEmpty>No country found.</CommandEmpty>
+                  <CommandGroup>
+                    {ALL_COUNTRIES.map((c) => (
+                      <CommandItem
+                        key={c.code}
+                        value={`${c.name} ${c.code}`}
+                        onSelect={() => onPickResidence(c.code)}
+                      >
+                        <span className="text-xl mr-2 leading-none">{c.flag}</span>
+                        <span className="flex-1">{c.name}</span>
+                        <span className="text-xs text-muted-foreground">{c.code}</span>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+
+          <p className="text-[11px] text-muted-foreground mt-3 flex items-center gap-1.5">
             <ShieldCheck className="h-3 w-3 text-primary" />
-            Only methods available in <span className="font-medium text-foreground">{activeCountry.label}</span> can be submitted.
+            Showing payment methods available in <span className="font-medium text-foreground">{activeCountry.label}</span>. Currency displayed in <span className="font-medium text-foreground">{meta.code}</span>.
           </p>
         </Card>
 
