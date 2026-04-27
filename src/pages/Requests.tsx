@@ -13,6 +13,7 @@ import { ArrowDownLeft, ArrowUpRight, Clock, FileText } from "lucide-react";
 
 const Requests = () => {
   const { user, loading } = useAuth();
+  const { format } = useCurrency();
   const [upgrades, setUpgrades] = useState<any[]>([]);
   const [withdrawals, setWithdrawals] = useState<any[]>([]);
 
@@ -34,6 +35,7 @@ const Requests = () => {
     <div className="min-h-screen">
       <Navbar />
       <div className="container py-10 max-w-4xl">
+        <BackButton />
         <div className="text-xs uppercase tracking-widest text-primary mb-2">My requests</div>
         <h1 className="font-display text-4xl font-semibold mb-8">Upgrade & withdrawal status</h1>
 
@@ -45,21 +47,20 @@ const Requests = () => {
           </TabsList>
 
           <TabsContent value="all">
-            <RequestList items={[...upgrades.map(u => ({ ...u, _kind: "upgrade" })), ...withdrawals.map(w => ({ ...w, _kind: "withdrawal", created_at: w.requested_at }))]
+            <RequestList format={format} items={[...upgrades.map(u => ({ ...u, _kind: "upgrade" })), ...withdrawals.map(w => ({ ...w, _kind: "withdrawal", created_at: w.requested_at }))]
               .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())} />
           </TabsContent>
-          <TabsContent value="upgrades"><RequestList items={upgrades.map(u => ({ ...u, _kind: "upgrade" }))} /></TabsContent>
-          <TabsContent value="withdrawals"><RequestList items={withdrawals.map(w => ({ ...w, _kind: "withdrawal", created_at: w.requested_at }))} /></TabsContent>
+          <TabsContent value="upgrades"><RequestList format={format} items={upgrades.map(u => ({ ...u, _kind: "upgrade" }))} /></TabsContent>
+          <TabsContent value="withdrawals"><RequestList format={format} items={withdrawals.map(w => ({ ...w, _kind: "withdrawal", created_at: w.requested_at }))} /></TabsContent>
         </Tabs>
 
-        <div className="mt-8"><Button asChild variant="outline"><Link to="/dashboard">← Dashboard</Link></Button></div>
       </div>
       <BottomNav />
     </div>
   );
 };
 
-const RequestList = ({ items }: { items: any[] }) => {
+const RequestList = ({ items, format }: { items: any[]; format: (n: any) => string }) => {
   if (items.length === 0) {
     return <Card className="glass-card p-10 rounded-xl text-center text-muted-foreground text-sm">No requests yet.</Card>;
   }
@@ -79,7 +80,7 @@ const RequestList = ({ items }: { items: any[] }) => {
                   {it._kind === "upgrade" ? `Upgrade to Level ${it.target_level}` : `Withdrawal — ${it.payout_method?.replace("_", " ")}`}
                 </div>
                 <div className="text-sm text-muted-foreground tabular-nums mt-0.5">
-                  ${Number(it.amount).toFixed(2)}
+                  {format(it.amount)}
                 </div>
                 <div className="text-xs text-muted-foreground mt-2 flex flex-wrap gap-x-4 gap-y-1">
                   <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> Submitted {new Date(it.created_at).toLocaleString()}</span>
