@@ -24,7 +24,7 @@ export function useIdleLogout(timeoutMs: number = 15 * 60 * 1000) {
       }, timeoutMs);
     };
 
-    const events: (keyof WindowEventMap)[] = [
+    const events: string[] = [
       "mousemove", "mousedown", "keydown", "touchstart", "scroll", "visibilitychange",
     ];
     events.forEach((e) => window.addEventListener(e, reset, { passive: true }));
