@@ -280,7 +280,7 @@ const Payment = () => {
       <div className="space-y-4">
         <div className="rounded-lg bg-primary/10 border border-primary/30 p-4 flex items-center justify-between">
           <div>
-            <div className="text-xs text-primary/80 uppercase tracking-wide">Amount to load</div>
+            <div className="text-xs text-primary/80 uppercase tracking-wide">Amount to pay</div>
             <div className="font-display text-xl font-semibold">{format(usd)}</div>
             {meta.code !== "USD" && <div className="text-[11px] text-muted-foreground mt-0.5">≈ ${usd.toFixed(2)} USD</div>}
           </div>
@@ -288,6 +288,32 @@ const Payment = () => {
         </div>
 
         {m.description && <p className="text-sm text-muted-foreground">{m.description}</p>}
+
+        {/* Inline structured instructions */}
+        {m.instructions && (
+          <div className="rounded-lg border border-border bg-secondary/40 p-4 space-y-2">
+            {m.instructions.provider && <DetailRow label="Provider" value={m.instructions.provider} />}
+            {m.instructions.network && <DetailRow label="Network" value={m.instructions.network} />}
+            {m.instructions.account_name && <DetailRow label="Recipient name" value={m.instructions.account_name} onCopy={() => copy(m.instructions!.account_name!)} />}
+            {m.instructions.account_number && <DetailRow label="Account / number" value={m.instructions.account_number} onCopy={() => copy(m.instructions!.account_number!)} mono />}
+            {m.instructions.address && <DetailRow label="Wallet address" value={m.instructions.address} onCopy={() => copy(m.instructions!.address!)} mono />}
+            {m.instructions.steps && (
+              <ol className="list-decimal pl-5 text-xs text-muted-foreground space-y-1 pt-2">
+                {m.instructions.steps.map((s, i) => <li key={i}>{s}</li>)}
+              </ol>
+            )}
+            {m.instructions.notes && <p className="text-xs text-warning pt-1">⚠ {m.instructions.notes}</p>}
+          </div>
+        )}
+
+        {activeCountry.comingSoon && (
+          <div className="rounded-lg border border-warning/40 bg-warning/10 p-4 text-sm">
+            <div className="font-medium mb-1">Local payments coming soon for your country 🚧</div>
+            <p className="text-xs text-muted-foreground">
+              We're rolling out local partners region by region. In the meantime, switch the country selector above to <strong>International</strong> and pay via crypto, or contact support to be added to the early-access list.
+            </p>
+          </div>
+        )}
 
         <div className="grid gap-3">
           {m.fields?.map((f) => {
