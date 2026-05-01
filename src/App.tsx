@@ -22,6 +22,7 @@ import Earnings from "./pages/Earnings.tsx";
 import Payment from "./pages/Payment.tsx";
 import DailyCheckin from "./pages/DailyCheckin.tsx";
 import { SupportBot } from "@/components/SupportBot";
+import { IdleLogoutGuard } from "@/components/IdleLogoutGuard";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <IdleLogoutGuard />
         <UpgradeNagModal />
         <SupportBot />
         <Routes>

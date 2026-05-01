@@ -82,7 +82,7 @@ const Auth = () => {
           <div className="mb-6">
             <h1 className="font-display text-3xl font-semibold">{mode === "signup" ? "Create your account" : "Welcome back"}</h1>
             <p className="text-muted-foreground text-sm mt-1">
-              {mode === "signup" ? "Free Level 0 to start. Upgrade anytime." : "Sign in to your Monetra dashboard."}
+              {mode === "signup" ? "Get a $20 welcome bonus added to your locked balance instantly." : "Sign in to your Cheddar4u dashboard."}
             </p>
           </div>
 
@@ -146,7 +146,7 @@ const Auth = () => {
             {mode === "signup" ? (
               <>Already have an account? <button className="text-primary hover:underline" onClick={() => { setMode("signin"); setPostSignupEmail(null); }}>Sign in</button></>
             ) : (
-              <>New to Monetra? <button className="text-primary hover:underline" onClick={() => { setMode("signup"); setPostSignupEmail(null); }}>Create one</button></>
+              <>New to Cheddar4u? <button className="text-primary hover:underline" onClick={() => { setMode("signup"); setPostSignupEmail(null); }}>Create one</button></>
             )}
           </div>
           <div className="mt-4 text-center">

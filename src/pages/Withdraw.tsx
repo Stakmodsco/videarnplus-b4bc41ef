@@ -75,7 +75,8 @@ const Withdraw = () => {
         <div className="text-xs uppercase tracking-widest text-primary mb-2">Withdrawal</div>
         <h1 className="font-display text-4xl font-semibold mb-2">Request a payout</h1>
         <p className="text-muted-foreground mb-8">
-          Minimum {format(min)}. Your daily cap at Level {profile.level} is {format(cap)}. Funds move to <em>Locked</em> instantly and are released after admin review.
+          Withdrawals are <strong>automated</strong> (not manual) by the system and only take <strong>minutes</strong> to reach your wallet.
+          Minimum {format(min)}. Your daily cap at Level {profile.level} is {format(cap)}.
         </p>
 
         <Card className="glass-card p-6 rounded-xl space-y-5">
@@ -85,7 +86,7 @@ const Withdraw = () => {
           </div>
 
           <div>
-            <Label className="text-xs uppercase tracking-wide text-muted-foreground">Amount (USD)</Label>
+            <Label className="text-xs uppercase tracking-wide text-muted-foreground">Amount ({meta.code})</Label>
             <Input type="number" step="0.01" min={min} max={Math.min(cap, Number(profile.balance))}
               value={amount} onChange={(e) => setAmount(e.target.value)} placeholder={`min ${min}`} className="mt-2 text-lg" />
             {meta.code !== "USD" && amount && Number(amount) > 0 && (

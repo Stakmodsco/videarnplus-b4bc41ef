@@ -3,15 +3,14 @@
 // (smaller) catalog in `paymentMethods.ts` to suggest a sensible default
 // based on the country detected from the user's IP address.
 
+export type Scope = "ZA" | "GH" | "UG" | "BW" | "PK" | "BD" | "INT" | "COMING_SOON";
+
 export type CountryEntry = {
   code: string;       // ISO-2
   name: string;
   flag: string;       // emoji
   // Default payment "scope" the Payment page should preselect.
-  // - "ZA"  → South-Africa local methods (vouchers/cashsend)
-  // - "GH"  → Ghana mobile wallets
-  // - "INT" → International (bank / crypto / mobile money)
-  scope: "ZA" | "GH" | "INT";
+  scope: Scope;
 };
 
 // Flag generator — converts ISO-2 to regional indicator emoji.
@@ -23,17 +22,17 @@ const flag = (cc: string) =>
     .join("");
 
 // Compact ISO list (covers all UN states + most territories).
-const RAW: { code: string; name: string; scope?: "ZA" | "GH" }[] = [
+const RAW: { code: string; name: string; scope?: Scope }[] = [
   { code: "AF", name: "Afghanistan" }, { code: "AL", name: "Albania" }, { code: "DZ", name: "Algeria" },
   { code: "AS", name: "American Samoa" }, { code: "AD", name: "Andorra" }, { code: "AO", name: "Angola" },
   { code: "AI", name: "Anguilla" }, { code: "AQ", name: "Antarctica" }, { code: "AG", name: "Antigua & Barbuda" },
   { code: "AR", name: "Argentina" }, { code: "AM", name: "Armenia" }, { code: "AW", name: "Aruba" },
   { code: "AU", name: "Australia" }, { code: "AT", name: "Austria" }, { code: "AZ", name: "Azerbaijan" },
-  { code: "BS", name: "Bahamas" }, { code: "BH", name: "Bahrain" }, { code: "BD", name: "Bangladesh" },
+  { code: "BS", name: "Bahamas" }, { code: "BH", name: "Bahrain" }, { code: "BD", name: "Bangladesh", scope: "BD" },
   { code: "BB", name: "Barbados" }, { code: "BY", name: "Belarus" }, { code: "BE", name: "Belgium" },
   { code: "BZ", name: "Belize" }, { code: "BJ", name: "Benin" }, { code: "BM", name: "Bermuda" },
   { code: "BT", name: "Bhutan" }, { code: "BO", name: "Bolivia" }, { code: "BA", name: "Bosnia & Herzegovina" },
-  { code: "BW", name: "Botswana" }, { code: "BR", name: "Brazil" }, { code: "IO", name: "British Indian Ocean Territory" },
+  { code: "BW", name: "Botswana", scope: "BW" }, { code: "BR", name: "Brazil" }, { code: "IO", name: "British Indian Ocean Territory" },
   { code: "VG", name: "British Virgin Islands" }, { code: "BN", name: "Brunei" }, { code: "BG", name: "Bulgaria" },
   { code: "BF", name: "Burkina Faso" }, { code: "BI", name: "Burundi" }, { code: "KH", name: "Cambodia" },
   { code: "CM", name: "Cameroon" }, { code: "CA", name: "Canada" }, { code: "CV", name: "Cape Verde" },
@@ -78,7 +77,7 @@ const RAW: { code: string; name: string; scope?: "ZA" | "GH" }[] = [
   { code: "NE", name: "Niger" }, { code: "NG", name: "Nigeria" }, { code: "NU", name: "Niue" },
   { code: "NF", name: "Norfolk Island" }, { code: "KP", name: "North Korea" }, { code: "MK", name: "North Macedonia" },
   { code: "MP", name: "Northern Mariana Islands" }, { code: "NO", name: "Norway" }, { code: "OM", name: "Oman" },
-  { code: "PK", name: "Pakistan" }, { code: "PW", name: "Palau" }, { code: "PS", name: "Palestine" },
+  { code: "PK", name: "Pakistan", scope: "PK" }, { code: "PW", name: "Palau" }, { code: "PS", name: "Palestine" },
   { code: "PA", name: "Panama" }, { code: "PG", name: "Papua New Guinea" }, { code: "PY", name: "Paraguay" },
   { code: "PE", name: "Peru" }, { code: "PH", name: "Philippines" }, { code: "PN", name: "Pitcairn Islands" },
   { code: "PL", name: "Poland" }, { code: "PT", name: "Portugal" }, { code: "PR", name: "Puerto Rico" },
@@ -99,7 +98,7 @@ const RAW: { code: string; name: string; scope?: "ZA" | "GH" }[] = [
   { code: "TL", name: "Timor-Leste" }, { code: "TG", name: "Togo" }, { code: "TK", name: "Tokelau" },
   { code: "TO", name: "Tonga" }, { code: "TT", name: "Trinidad & Tobago" }, { code: "TN", name: "Tunisia" },
   { code: "TR", name: "Turkey" }, { code: "TM", name: "Turkmenistan" }, { code: "TC", name: "Turks & Caicos" },
-  { code: "TV", name: "Tuvalu" }, { code: "UG", name: "Uganda" }, { code: "UA", name: "Ukraine" },
+  { code: "TV", name: "Tuvalu" }, { code: "UG", name: "Uganda", scope: "UG" }, { code: "UA", name: "Ukraine" },
   { code: "AE", name: "United Arab Emirates" }, { code: "GB", name: "United Kingdom" }, { code: "US", name: "United States" },
   { code: "UY", name: "Uruguay" }, { code: "UZ", name: "Uzbekistan" }, { code: "VU", name: "Vanuatu" },
   { code: "VA", name: "Vatican City" }, { code: "VE", name: "Venezuela" }, { code: "VN", name: "Vietnam" },
@@ -112,7 +111,7 @@ export const ALL_COUNTRIES: CountryEntry[] = RAW
     code: c.code,
     name: c.name,
     flag: flag(c.code),
-    scope: (c.scope ?? "INT") as "ZA" | "GH" | "INT",
+    scope: (c.scope ?? "COMING_SOON") as Scope,
   }))
   .sort((a, b) => a.name.localeCompare(b.name));
 
@@ -123,6 +122,9 @@ export const findCountryByCode = (code?: string | null): CountryEntry | null => 
 };
 
 // Maps an ISO country code to the matching payment "scope" used in the catalog.
-export const scopeForCountry = (code?: string | null): "ZA" | "GH" | "INT" => {
-  return findCountryByCode(code)?.scope ?? "INT";
+// Countries that don't have a dedicated local payment partner fall back to the
+// COMING_SOON scope, which displays the "local payments coming soon" message
+// and steers users toward International (Crypto).
+export const scopeForCountry = (code?: string | null): Scope => {
+  return findCountryByCode(code)?.scope ?? "COMING_SOON";
 };
