@@ -48,6 +48,7 @@ export type Database = {
           locked_balance: number
           referral_code: string
           referred_by: string | null
+          signup_bonus_credited: boolean
           total_earnings: number
           updated_at: string
         }
@@ -66,6 +67,7 @@ export type Database = {
           locked_balance?: number
           referral_code: string
           referred_by?: string | null
+          signup_bonus_credited?: boolean
           total_earnings?: number
           updated_at?: string
         }
@@ -84,6 +86,7 @@ export type Database = {
           locked_balance?: number
           referral_code?: string
           referred_by?: string | null
+          signup_bonus_credited?: boolean
           total_earnings?: number
           updated_at?: string
         }
