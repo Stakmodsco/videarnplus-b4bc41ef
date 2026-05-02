@@ -401,10 +401,16 @@ const Payment = () => {
           <div className="text-xs uppercase tracking-wide text-muted-foreground">Plan: {planName}</div>
           <div className="font-display text-5xl font-semibold mt-2">{format(usd, { decimals: 0 })}</div>
           <div className="text-xs text-muted-foreground mt-3">
-            ≈ USD {usd.toFixed(0)}
-            {localAmounts.map((a) => ` | ${a.code} ${a.value.toLocaleString(undefined, { maximumFractionDigits: 2 })}`)}
+            Displayed in your selected country currency ({meta.code}).
           </div>
         </Card>
+
+        {pendingUpgrade && (
+          <Card className="glass-card p-4 rounded-xl mb-4 border-warning/40 text-sm">
+            <div className="font-medium">Pending upgrade request</div>
+            <div className="text-muted-foreground mt-1">You already submitted an upgrade for Level {pendingUpgrade.target_level}. Wait for admin approval or rejection before submitting another payment.</div>
+          </Card>
+        )}
 
         {/* Residence selector — drives currency + payment scope */}
         <Card className="glass-card p-4 rounded-xl mb-4">
