@@ -38,20 +38,31 @@ const Upgrade = () => {
   }, []);
 
   // Fetch the most recent upgrade transaction so we can show its status.
+  // Polls every 10s while a pending upgrade exists so admin approvals
+  // surface in the UI without a manual refresh.
   useEffect(() => {
     if (!user) return;
-    const load = () =>
-      supabase
+    let cancelled = false;
+    const load = async () => {
+      const { data } = await supabase
         .from("transactions")
         .select("id,status,target_level,notes,created_at")
         .eq("user_id", user.id)
         .eq("type", "upgrade")
         .order("created_at", { ascending: false })
         .limit(1)
-        .maybeSingle()
-        .then(({ data }) => setLatest((data as LatestUpgrade) ?? null));
+        .maybeSingle();
+      if (cancelled) return;
+      setLatest((data as LatestUpgrade) ?? null);
+      return data as LatestUpgrade | null;
+    };
     load();
-    // Refresh whenever the profile changes (admin approval bumps level).
+    const interval = setInterval(async () => {
+      const cur = await load();
+      // Stop polling once the upgrade is no longer pending.
+      if (cur && cur.status !== "pending") clearInterval(interval);
+    }, 10_000);
+    return () => { cancelled = true; clearInterval(interval); };
   }, [user, profile?.level]);
 
   if (loading) return null;
