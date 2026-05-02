@@ -6,6 +6,8 @@ import { ArrowRight, ShieldCheck, BarChart3, CheckCircle2, Sparkles, Lock, Users
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { ActivityCarousel } from "@/components/ActivityCarousel";
+import { Testimonials } from "@/components/Testimonials";
 
 const tiers = [
   { name: "Starter", price: "Free", level: 0, features: ["Daily check-in (small reward)", "Browse tasks", "Verify your identity"], cta: "Create account" },
@@ -31,6 +33,7 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <Navbar />
+      <ActivityCarousel />
 
       {/* Hero */}
       <section className="relative overflow-hidden">
@@ -41,7 +44,7 @@ const Index = () => {
               <span className="block bg-gradient-emerald bg-clip-text text-transparent"> digital activities.</span>
             </h1>
             <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl text-balance">
-              Monetra is a membership rewards platform with controlled payouts, daily caps, and admin-reviewed withdrawals — designed to feel like a real fintech product, not a quick-money scheme.
+              Cheddar4u is a membership rewards platform with controlled payouts, daily caps, and automated withdrawals — designed to feel like a real fintech product, not a quick-money scheme.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-3">
               <Button asChild size="xl" variant="hero">
@@ -63,7 +66,7 @@ const Index = () => {
 
       {/* How it works */}
       <section id="how" className="container py-24">
-        <SectionHeader eyebrow="How Monetra works" title="Three steps. No surprises." />
+        <SectionHeader eyebrow="How Cheddar4u works" title="Three steps. No surprises." />
         <div className="grid md:grid-cols-3 gap-6 mt-12">
           {[
             { icon: Users, title: "1. Create an account", desc: "Sign up free at Level 0. Optional referral code links you to your inviter." },
@@ -142,9 +145,11 @@ const Index = () => {
         </Accordion>
       </section>
 
+      <Testimonials />
+
       <footer className="border-t border-border/60 mt-12">
         <div className="container py-10 flex flex-col md:flex-row justify-between gap-4 text-sm text-muted-foreground">
-          <div>© {new Date().getFullYear()} Monetra. All rights reserved.</div>
+          <div>© {new Date().getFullYear()} Cheddar4u. All rights reserved.</div>
           <div>Earnings depend on activity and tier. Subject to platform terms.</div>
         </div>
       </footer>
