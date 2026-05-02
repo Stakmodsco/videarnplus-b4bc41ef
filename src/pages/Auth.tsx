@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { CheckCircle2, Circle, ShieldCheck } from "lucide-react";
-import { checkPassword, passwordError, validateEmail, EMAIL_HINT } from "@/lib/passwordRules";
+import { checkPassword, generateStrongPassword, passwordError, validateEmail, EMAIL_HINT } from "@/lib/passwordRules";
 
 const Auth = () => {
   const [params] = useSearchParams();
@@ -27,6 +27,11 @@ const Auth = () => {
   useEffect(() => { if (user) navigate("/dashboard"); }, [user, navigate]);
 
   const passwordChecks = checkPassword(form.password);
+  const suggestStrongPassword = () => {
+    const password = generateStrongPassword();
+    setForm((f) => ({ ...f, password }));
+    toast.success("Strong password suggested. Save it somewhere safe.");
+  };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -113,6 +118,13 @@ const Auth = () => {
               )}
             </Field>
             <Field label="Password">
+              {mode === "signup" && (
+                <div className="mb-2 flex justify-end">
+                  <Button type="button" variant="ghost" size="sm" onClick={suggestStrongPassword}>
+                    Suggest strong password
+                  </Button>
+                </div>
+              )}
               <PasswordInput
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
