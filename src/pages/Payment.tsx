@@ -118,6 +118,14 @@ const Payment = () => {
     setCountryOpen(false);
   };
 
+  const useInternationalFallback = () => {
+    setCountry("INT");
+    setMethod("crypto");
+    setFields({});
+    setErrors({});
+    toast.info("International fallback selected.");
+  };
+
   // Reset method + fields whenever country changes — prevents method/country mismatch.
   useEffect(() => {
     const first = activeCountry.methods[0]?.id;
@@ -464,6 +472,11 @@ const Payment = () => {
             <ShieldCheck className="h-3 w-3 text-primary" />
             Showing payment methods available in <span className="font-medium text-foreground">{activeCountry.label}</span>. Currency displayed in <span className="font-medium text-foreground">{meta.code}</span>.
           </p>
+          {activeCountry.comingSoon && (
+            <Button type="button" variant="outline" size="sm" className="mt-3 w-full" onClick={useInternationalFallback}>
+              Use International fallback
+            </Button>
+          )}
         </Card>
 
         <Accordion type="single" value={method} onValueChange={(v) => v && setMethod(v)} collapsible={false} className="space-y-3 mb-6">
