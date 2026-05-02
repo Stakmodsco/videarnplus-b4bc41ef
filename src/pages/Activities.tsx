@@ -138,17 +138,10 @@ const Activities = () => {
   };
 
   const onTileClick = (t: Tile) => {
-    // Level-locked tier features always redirect to /upgrade
-    if (profile.level < t.unlockLevel) {
-      toast.info("Upgrade your tier to unlock this");
-      navigate("/upgrade");
-      return;
-    }
-    // Premium tile that hasn't been individually unlocked yet
-    if (t.premium && !isPremiumUnlocked(t.id)) {
-      const fee = Number(fees[t.id] ?? 0);
-      if (!confirm(`Unlock "${t.title}" for ${format(fee)} from your balance?`)) return;
-      invokeFn("unlock-tile", { tile_id: t.id });
+    // Any locked Ways-to-Earn tile goes straight to the upgrade page with the watermark enabled.
+    if (profile.level < t.unlockLevel || (t.premium && !isPremiumUnlocked(t.id))) {
+      toast.info("Upgrade to unlock this task");
+      navigate("/upgrade?locked=1");
       return;
     }
     if (t.action === "checkin") {
@@ -192,7 +185,7 @@ const Activities = () => {
                 disabled={busy !== null}
                 className={`text-left glass-card rounded-xl p-5 relative transition-all hover:border-primary/40 ${
                   locked ? "opacity-80" : "hover:translate-y-[-2px]"
-                } disabled:cursor-not-allowed`}
+                } ${locked ? "upgrade-watermark" : ""} disabled:cursor-not-allowed`}
               >
                 {locked && (
                   <span className="absolute top-3 right-3 h-6 w-6 rounded-full bg-secondary/80 border border-border grid place-items-center text-muted-foreground">
@@ -224,19 +217,37 @@ const Activities = () => {
               </div>
             </div>
             {nextTask ? (
-              <div className="flex items-center gap-4 p-3 rounded-lg border border-border bg-secondary/40">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-3 rounded-lg border border-border bg-secondary/40">
                 <div className="h-10 w-10 rounded-lg bg-primary/15 border border-primary/20 grid place-items-center">
                   <Sparkles className="h-5 w-5 text-primary" />
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <div className="font-medium text-sm">{nextTask.title}</div>
                   {nextTask.description && <div className="text-xs text-muted-foreground">{nextTask.description}</div>}
                 </div>
-                <div className="text-right">
+                <div className="text-left sm:text-right">
                   <div className="text-primary font-semibold tabular-nums text-sm">+ {format(nextTask.reward)}</div>
                   <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{nextTask.task_type}</div>
                 </div>
+                <Button size="sm" variant="hero" disabled={busy !== null} onClick={() => invokeFn("complete-task", { catalog_id: nextTask.id })}>
+                  Complete
+                </Button>
               </div>
+            ) : profile.level < 2 ? (
+              <button
+                type="button"
+                onClick={() => navigate("/upgrade?locked=1")}
+                className="w-full text-left flex items-center gap-4 p-3 rounded-lg border border-border bg-secondary/40 upgrade-watermark"
+              >
+                <div className="h-10 w-10 rounded-lg bg-primary/15 border border-primary/20 grid place-items-center">
+                  <Lock className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <div className="font-medium text-sm">Temporary upgraded tasks</div>
+                  <div className="text-xs text-muted-foreground">Upgrade to access the rotating task list.</div>
+                </div>
+                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+              </button>
             ) : (
               <div className="text-sm text-muted-foreground py-4 text-center">
                 You've completed every published task — check back soon for new ones!

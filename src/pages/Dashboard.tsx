@@ -20,6 +20,7 @@ import {
   Headphones,
   Link2,
   ListChecks,
+  Lock,
   Play,
   Sparkles,
   TrendingUp,
@@ -180,12 +181,12 @@ const Dashboard = () => {
             return (
               <Link
                 key={t.id}
-                to="/activities"
-                className="glass-card rounded-xl p-4 text-center relative hover:border-primary/40 transition-colors"
+                to={locked ? "/upgrade?locked=1" : "/activities"}
+                className={`glass-card rounded-xl p-4 text-center relative hover:border-primary/40 transition-colors ${locked ? "upgrade-watermark" : ""}`}
               >
                 {locked && (
-                  <span className="absolute top-1.5 right-1.5 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded border border-border bg-secondary/60 text-muted-foreground">
-                    Locked
+                  <span className="absolute top-1.5 right-1.5 h-6 w-6 rounded-full border border-border bg-secondary/70 text-muted-foreground grid place-items-center">
+                    <Lock className="h-3 w-3" />
                   </span>
                 )}
                 <Icon className={`h-6 w-6 mx-auto ${locked ? "text-muted-foreground" : "text-primary"}`} />

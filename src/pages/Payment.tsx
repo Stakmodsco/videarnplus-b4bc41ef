@@ -73,6 +73,7 @@ const Payment = () => {
   const [file, setFile] = useState<File | null>(null);
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [pendingUpgrade, setPendingUpgrade] = useState<any | null>(null);
   const [countryOpen, setCountryOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -81,6 +82,18 @@ const Payment = () => {
       const m: any = {}; data?.forEach((r: any) => (m[r.key] = r.value)); setSettings(m);
     });
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from("transactions")
+      .select("id,target_level,created_at")
+      .eq("user_id", user.id)
+      .eq("type", "upgrade")
+      .eq("status", "pending")
+      .maybeSingle()
+      .then(({ data }) => setPendingUpgrade(data ?? null));
+  }, [user]);
 
   // Auto-fill the residence selector from IP geolocation on first load.
   useEffect(() => {
@@ -103,6 +116,14 @@ const Payment = () => {
     setOverride(code);
     setCountry(scopeForCountry(code));
     setCountryOpen(false);
+  };
+
+  const useInternationalFallback = () => {
+    setCountry("INT");
+    setMethod("crypto");
+    setFields({});
+    setErrors({});
+    toast.info("International fallback selected.");
   };
 
   // Reset method + fields whenever country changes — prevents method/country mismatch.
@@ -137,10 +158,6 @@ const Payment = () => {
 
   const prices = settings.level_prices as Record<string, number>;
   const usd = Number(prices?.[String(targetLevel)] ?? 0);
-  const fxRates = (settings.fx_rates ?? { NGN: 1481.47, GHS: 15, ZAR: 18.5 }) as Record<string, number>;
-  const localAmounts = Object.entries(fxRates).map(([code, rate]) => ({
-    code, value: usd * Number(rate),
-  }));
 
   const planName = ({ 1: "Silver", 2: "Gold", 3: "Platinum" } as any)[targetLevel];
   const instructions = (settings.payment_instructions ?? {}) as Record<string, Instructions>;
@@ -161,6 +178,12 @@ const Payment = () => {
   };
 
   const submit = async () => {
+    if (pendingUpgrade) {
+      return toast.error("You already have a pending upgrade request. Please wait for admin review before submitting another.");
+    }
+    if (activeCountry.comingSoon || activeMethod.id === "coming_soon") {
+      return toast.error("Local payments are not configured for your country yet. Use the International fallback option.");
+    }
     // 1. Country/method lock — guarantee the chosen method belongs to the chosen country.
     const belongsToCountry = activeCountry.methods.some((m) => m.id === activeMethod.id);
     if (!belongsToCountry) {
@@ -228,8 +251,8 @@ const Payment = () => {
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
-      toast.success("Payment submitted — admin will review shortly");
-      navigate("/requests");
+      toast.success("Payment submitted — your upgrade is pending review");
+      navigate("/upgrade");
     } catch (e: any) {
       toast.error(e.message ?? "Failed");
     } finally {
@@ -386,10 +409,16 @@ const Payment = () => {
           <div className="text-xs uppercase tracking-wide text-muted-foreground">Plan: {planName}</div>
           <div className="font-display text-5xl font-semibold mt-2">{format(usd, { decimals: 0 })}</div>
           <div className="text-xs text-muted-foreground mt-3">
-            ≈ USD {usd.toFixed(0)}
-            {localAmounts.map((a) => ` | ${a.code} ${a.value.toLocaleString(undefined, { maximumFractionDigits: 2 })}`)}
+            Displayed in your selected country currency ({meta.code}).
           </div>
         </Card>
+
+        {pendingUpgrade && (
+          <Card className="glass-card p-4 rounded-xl mb-4 border-warning/40 text-sm">
+            <div className="font-medium">Pending upgrade request</div>
+            <div className="text-muted-foreground mt-1">You already submitted an upgrade for Level {pendingUpgrade.target_level}. Wait for admin approval or rejection before submitting another payment.</div>
+          </Card>
+        )}
 
         {/* Residence selector — drives currency + payment scope */}
         <Card className="glass-card p-4 rounded-xl mb-4">
@@ -443,6 +472,11 @@ const Payment = () => {
             <ShieldCheck className="h-3 w-3 text-primary" />
             Showing payment methods available in <span className="font-medium text-foreground">{activeCountry.label}</span>. Currency displayed in <span className="font-medium text-foreground">{meta.code}</span>.
           </p>
+          {activeCountry.comingSoon && (
+            <Button type="button" variant="outline" size="sm" className="mt-3 w-full" onClick={useInternationalFallback}>
+              Use International fallback
+            </Button>
+          )}
         </Card>
 
         <Accordion type="single" value={method} onValueChange={(v) => v && setMethod(v)} collapsible={false} className="space-y-3 mb-6">

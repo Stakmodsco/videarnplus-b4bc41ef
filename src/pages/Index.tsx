@@ -8,15 +8,17 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ActivityCarousel } from "@/components/ActivityCarousel";
 import { Testimonials } from "@/components/Testimonials";
+import { useCurrency } from "@/hooks/useCurrency";
 
 const tiers = [
-  { name: "Starter", price: "Free", level: 0, features: ["Daily check-in (small reward)", "Browse tasks", "Verify your identity"], cta: "Create account" },
-  { name: "Bronze", price: "$25", level: 1, features: ["Watch & Earn unlocked", "Spin & Win unlocked", "$5 daily earning cap", "$50 daily withdrawal"], cta: "Upgrade to Bronze" },
-  { name: "Silver", price: "$50", level: 2, features: ["Higher per-task rewards", "$15 daily earning cap", "$200 daily withdrawal", "Referral commission boost"], cta: "Upgrade to Silver", popular: true },
-  { name: "Gold", price: "$100", level: 3, features: ["Top per-task rewards", "$40 daily earning cap", "$500 daily withdrawal", "Priority withdrawal review"], cta: "Upgrade to Gold" },
+  { name: "Starter", price: 0, level: 0, features: ["Daily check-in reward", "Browse tasks", "Signup bonus credited"], cta: "Create account" },
+  { name: "Silver", price: 25, level: 1, features: ["Watch & Earn unlocked", "Spin & Win unlocked", "Higher daily earning cap", "Withdrawal access"], cta: "Upgrade to Silver" },
+  { name: "Gold", price: 50, level: 2, features: ["Higher per-task rewards", "Larger earning cap", "More sections unlocked", "Referral commission boost"], cta: "Upgrade to Gold", popular: true },
+  { name: "Platinum", price: 100, level: 3, features: ["Top per-task rewards", "Maximum daily cap", "All sections unlocked", "Priority automation"], cta: "Upgrade to Platinum" },
 ];
 
 const Index = () => {
+  const { format } = useCurrency();
   const [stats, setStats] = useState({ payouts: 0, users: 0 });
 
   useEffect(() => {
@@ -34,6 +36,11 @@ const Index = () => {
     <div className="min-h-screen">
       <Navbar />
       <ActivityCarousel />
+      <div className="border-b border-primary/20 bg-primary/10">
+        <div className="container py-3 text-sm text-center font-medium">
+          New members get a signup bonus of around {format(20)} credited to their locked balance after creating an account.
+        </div>
+      </div>
 
       {/* Hero */}
       <section className="relative overflow-hidden">
@@ -56,7 +63,7 @@ const Index = () => {
             </div>
 
             <div className="mt-16 grid grid-cols-2 md:grid-cols-3 gap-6">
-              <Stat label="Total payouts processed" value={`$${stats.payouts.toLocaleString(undefined, { maximumFractionDigits: 0 })}`} />
+              <Stat label="Total payouts processed" value={format(stats.payouts, { decimals: 0 })} />
               <Stat label="Active members" value={stats.users.toLocaleString()} />
               <Stat label="Avg. review time" value="< 24h" />
             </div>
@@ -71,7 +78,7 @@ const Index = () => {
           {[
             { icon: Users, title: "1. Create an account", desc: "Sign up free at Level 0. Optional referral code links you to your inviter." },
             { icon: Sparkles, title: "2. Complete daily activities", desc: "Check in once per 24h, complete server-validated tasks. Every reward respects your daily cap." },
-            { icon: ShieldCheck, title: "3. Withdraw with admin review", desc: "Request payout above the minimum. Funds lock instantly and are released after manual review." },
+            { icon: ShieldCheck, title: "3. Withdraw automatically", desc: "Request payout above the minimum. Withdrawals are automated by the system and only take minutes to reach your wallet." },
           ].map((s, i) => (
             <Card key={i} className="glass-card p-8 rounded-xl">
               <div className="h-11 w-11 rounded-lg bg-primary/10 border border-primary/20 grid place-items-center mb-5">
@@ -95,7 +102,7 @@ const Index = () => {
                 <h3 className="font-display text-2xl font-semibold">{t.name}</h3>
                 <span className="text-xs text-muted-foreground">L{t.level}</span>
               </div>
-              <div className="text-3xl font-display font-semibold mb-6">{t.price}</div>
+              <div className="text-3xl font-display font-semibold mb-6">{t.price === 0 ? "Free" : format(t.price, { decimals: 0 })}</div>
               <ul className="space-y-2.5 text-sm text-muted-foreground flex-1">
                 {t.features.map((f) => (
                   <li key={f} className="flex items-start gap-2"><CheckCircle2 className="h-4 w-4 text-primary mt-0.5 shrink-0" /><span>{f}</span></li>
@@ -115,7 +122,7 @@ const Index = () => {
           {[
             { icon: Lock, title: "Server-validated rewards", desc: "Every check-in, task, and withdrawal is verified server-side. No client-side balance tampering." },
             { icon: BarChart3, title: "Hard daily caps", desc: "Earnings are capped per level — no infinite earning loops. Caps are visible in your dashboard." },
-            { icon: ShieldCheck, title: "Manual withdrawal review", desc: "Withdrawals lock funds, then a human admin processes payouts within 24 hours." },
+            { icon: ShieldCheck, title: "Automated withdrawals", desc: "Withdrawal requests are handled by the system and typically reach users' wallets within minutes." },
           ].map((s) => (
             <Card key={s.title} className="glass-card p-7 rounded-xl">
               <s.icon className="h-5 w-5 text-primary mb-4" />
@@ -131,11 +138,11 @@ const Index = () => {
         <SectionHeader eyebrow="FAQ" title="Earning rules, explained." />
         <Accordion type="single" collapsible className="mt-10">
           {[
-            { q: "How fast can I withdraw?", a: "Minimum withdrawal is $50. Once submitted, your funds move from Available to Locked balance and a human admin processes the payout — usually within 24 hours." },
+            { q: "How fast can I withdraw?", a: `Minimum withdrawal is ${format(50)}. Withdrawals are automated by the system and only take minutes to reach your wallet.` },
             { q: "Can I earn without upgrading?", a: "Level 0 (free) members get a small daily check-in reward and can browse the platform. Watch & Earn and Spin & Win require Level 1+." },
             { q: "What happens if I miss a check-in?", a: "Missed days do not stack. The check-in resets 24 hours after your last claim — there is no streak bonus or backlog." },
             { q: "How do referrals work?", a: "Each member gets a unique referral code. You earn a 10% commission on Level-1 referrals' approved upgrades and a smaller commission on Level-2 referrals. Daily referral cap applies." },
-            { q: "Why are caps and reviews so strict?", a: "To keep Monetra sustainable. Unlimited rewards always collapse. Caps + manual review let us keep paying members reliably for the long term." },
+            { q: "Why are caps strict?", a: "To keep Cheddar4u sustainable. Unlimited rewards always collapse. Caps let us keep paying members reliably for the long term." },
           ].map((f, i) => (
             <AccordionItem key={i} value={`item-${i}`} className="border-border">
               <AccordionTrigger className="text-left hover:no-underline">{f.q}</AccordionTrigger>

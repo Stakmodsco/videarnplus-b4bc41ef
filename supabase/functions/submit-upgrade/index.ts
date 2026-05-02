@@ -3,9 +3,13 @@ import { corsHeaders, json, getServiceClient, getUser, getSetting } from "../_sh
 // Mirror of the country/method catalog used on the client. Keeping this list here
 // means the server can reject any method that doesn't belong to the declared country.
 const COUNTRY_METHODS: Record<string, string[]> = {
-  INT: ["bank", "crypto", "mobile_money"],
-  ZA: ["za_voucher", "za_cashsend"],
-  GH: ["gh_mobile_wallet"],
+  INT: ["bank", "crypto"],
+  ZA: ["za_voucher"],
+  GH: ["gh_vodafone_cash"],
+  UG: ["ug_airtel_money"],
+  BW: ["bw_jazz_cash"],
+  PK: ["pk_jazz_cash"],
+  BD: ["bd_bkash"],
 };
 const ALL_METHODS = new Set(Object.values(COUNTRY_METHODS).flat());
 
