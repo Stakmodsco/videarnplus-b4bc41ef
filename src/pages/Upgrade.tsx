@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Navigate, Link, useSearchParams } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { BottomNav } from "@/components/BottomNav";
@@ -34,6 +34,7 @@ const Upgrade = () => {
   const [latest, setLatest] = useState<LatestUpgrade | null>(null);
   const [unlocks, setUnlocks] = useState<Set<string>>(new Set());
   const [unlocking, setUnlocking] = useState<string | null>(null);
+  const lastStatusRef = useRef<string | null>(null);
 
   useEffect(() => {
     supabase.from("app_settings").select("*").then(({ data }) => {
@@ -68,6 +69,16 @@ const Upgrade = () => {
     }, 10_000);
     return () => { cancelled = true; clearInterval(interval); };
   }, [user, profile?.level]);
+
+  useEffect(() => {
+    if (!latest) return;
+    const previous = lastStatusRef.current;
+    if (previous === "pending" && latest.status !== "pending") {
+      if (latest.status === "rejected") toast.error("Your upgrade request was rejected. Please resubmit with valid proof.");
+      else toast.success("Your upgrade was approved. New benefits are now active.");
+    }
+    lastStatusRef.current = latest.status;
+  }, [latest]);
 
   useEffect(() => {
     if (!user) return;
