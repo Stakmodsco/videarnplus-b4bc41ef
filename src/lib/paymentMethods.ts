@@ -79,30 +79,15 @@ const cryptoMethod: MethodDef = {
 };
 
 export const COUNTRIES: CountryDef[] = [
-  // ─── International / fallback (uses settings.payment_instructions) ────────
+  // ─── International / fallback (crypto only) ───────────────────────────────
   {
     id: "INT",
     label: "International",
     flag: "🌍",
-    methods: [
-      {
-        id: "bank",
-        label: "Bank Transfer",
-        icon: "Building2",
-        useLegacyInstructions: true,
-        proofHint: "Upload a screenshot of the completed bank transfer.",
-      },
-      {
-        id: "crypto",
-        label: "Crypto (USDT TRC20)",
-        icon: "Bitcoin",
-        useLegacyInstructions: true,
-        proofHint: "Upload a screenshot of the on-chain transaction (TXID and amount visible).",
-      },
-    ],
+    methods: [cryptoMethod],
   },
 
-  // ─── South Africa (vouchers + cash send) ──────────────────────────────────
+  // ─── South Africa ─────────────────────────────────────────────────────────
   {
     id: "ZA",
     label: "South Africa",
@@ -122,10 +107,11 @@ export const COUNTRIES: CountryDef[] = [
           { key: "pin", label: "Voucher PIN", required: true, pattern: "^\\d{12,19}$", patternMessage: "12–19 digits, no spaces.", minLength: 12, maxLength: 19 },
         ],
       },
+      cryptoMethod,
     ],
   },
 
-  // ─── Ghana (Vodafone Cash via MTN-to-Vodafone *170#) ──────────────────────
+  // ─── Ghana ────────────────────────────────────────────────────────────────
   {
     id: "GH",
     label: "Ghana",
@@ -156,10 +142,11 @@ export const COUNTRIES: CountryDef[] = [
             pattern: "^\\+?233\\d{9}$", patternMessage: "Use a valid Ghana number, e.g. +233241234567.", maxLength: 14 },
         ],
       },
+      cryptoMethod,
     ],
   },
 
-  // ─── Uganda (Airtel Money / International Money Transfer) ─────────────────
+  // ─── Uganda ───────────────────────────────────────────────────────────────
   {
     id: "UG",
     label: "Uganda",
@@ -187,10 +174,11 @@ export const COUNTRIES: CountryDef[] = [
             pattern: "^[A-Za-z0-9.]{6,32}$", patternMessage: "6–32 letters/digits.", minLength: 6, maxLength: 32 },
         ],
       },
+      cryptoMethod,
     ],
   },
 
-  // ─── Botswana (Jazz Cash bank transfer) ───────────────────────────────────
+  // ─── Botswana ─────────────────────────────────────────────────────────────
   {
     id: "BW",
     label: "Botswana",
@@ -210,10 +198,11 @@ export const COUNTRIES: CountryDef[] = [
             pattern: "^[A-Za-z0-9.\\-]{6,40}$", patternMessage: "6–40 letters/digits.", minLength: 6, maxLength: 40 },
         ],
       },
+      cryptoMethod,
     ],
   },
 
-  // ─── Pakistan (Jazz Cash) ─────────────────────────────────────────────────
+  // ─── Pakistan ─────────────────────────────────────────────────────────────
   {
     id: "PK",
     label: "Pakistan",
@@ -233,10 +222,11 @@ export const COUNTRIES: CountryDef[] = [
             pattern: "^[A-Za-z0-9.\\-]{6,40}$", patternMessage: "6–40 letters/digits.", minLength: 6, maxLength: 40 },
         ],
       },
+      cryptoMethod,
     ],
   },
 
-  // ─── Bangladesh (bKash, Send Money only) ──────────────────────────────────
+  // ─── Bangladesh ───────────────────────────────────────────────────────────
   {
     id: "BD",
     label: "Bangladesh",
@@ -258,24 +248,16 @@ export const COUNTRIES: CountryDef[] = [
             pattern: "^01\\d{9}$", patternMessage: "Must be 11 digits starting with 01.", minLength: 11, maxLength: 11 },
         ],
       },
+      cryptoMethod,
     ],
   },
 
-  // ─── Coming-soon fallback for every other country ─────────────────────────
+  // ─── Crypto-only fallback for every other country ─────────────────────────
   {
     id: "COMING_SOON",
-    label: "Coming soon",
-    flag: "🚧",
-    comingSoon: true,
-    methods: [
-      {
-        id: "coming_soon",
-        label: "Local payments coming soon",
-        icon: "Building2",
-        description:
-          "We don't have a local payment partner in your country yet. Please choose International (Crypto) above, or contact support to be notified when local methods launch in your region.",
-      },
-    ],
+    label: "Crypto (Worldwide)",
+    flag: "🌍",
+    methods: [cryptoMethod],
   },
 ];
 
