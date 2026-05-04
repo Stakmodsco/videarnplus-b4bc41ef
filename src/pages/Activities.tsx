@@ -123,15 +123,20 @@ const Activities = () => {
   const isPremiumUnlocked = (id: string) => unlocks.has(id) || tierFree.includes(id);
 
   const invokeFn = async (fn: string, body: any = {}) => {
-    setBusy(fn + JSON.stringify(body));
+    const key = fn + JSON.stringify(body);
+    setBusy(key);
     try {
       const { data, error } = await supabase.functions.invoke(fn, { body });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
-      toast.success(data?.reward ? `+ ${format(data.reward)} earned` : "Done");
+      // Optimistically mark catalog task as completed so the button updates immediately.
+      if (body?.catalog_id) {
+        setCompletions((prev) => new Set(prev).add(body.catalog_id));
+      }
+      toast.success(data?.reward ? `+ ${format(data.reward)} earned` : "Task completed");
       await Promise.all([refresh(), loadCounts()]);
     } catch (e: any) {
-      toast.error(e.message ?? "Failed");
+      toast.error(e?.message ?? "Task failed — please try again");
     } finally {
       setBusy(null);
     }
