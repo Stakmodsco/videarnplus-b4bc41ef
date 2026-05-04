@@ -35,6 +35,7 @@ const App = () => (
       <BrowserRouter>
         <IdleLogoutGuard />
         <UpgradeNagModal />
+        <AuthNudgeModal />
         <SupportBot />
         <Routes>
           <Route path="/" element={<Index />} />
