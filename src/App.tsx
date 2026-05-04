@@ -23,6 +23,7 @@ import Payment from "./pages/Payment.tsx";
 import DailyCheckin from "./pages/DailyCheckin.tsx";
 import { SupportBot } from "@/components/SupportBot";
 import { IdleLogoutGuard } from "@/components/IdleLogoutGuard";
+import { AuthNudgeModal } from "@/components/AuthNudgeModal";
 
 const queryClient = new QueryClient();
 
