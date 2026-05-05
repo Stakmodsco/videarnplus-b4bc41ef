@@ -23,3 +23,9 @@ verify_jwt = true
 
 [functions.support-bot]
 verify_jwt = false
+
+[functions.captcha-challenge]
+verify_jwt = false
+
+[functions.signup]
+verify_jwt = false
