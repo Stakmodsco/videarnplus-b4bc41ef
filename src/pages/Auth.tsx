@@ -194,21 +194,22 @@ const Auth = () => {
               </Field>
             )}
             {mode === "signup" && (
-              <Field label={`Captcha — what is ${captcha.a} + ${captcha.b}?`}>
+              <Field label={captcha ? `Captcha — what is ${captcha.a} + ${captcha.b}?` : "Captcha"}>
                 <div className="flex gap-2">
                   <Input
                     type="number"
                     inputMode="numeric"
                     value={captchaInput}
                     onChange={(e) => setCaptchaInput(e.target.value)}
-                    placeholder="Type the answer"
+                    placeholder={captcha ? "Type the answer" : "Loading…"}
                     required
+                    disabled={!captcha || captchaLoading}
                   />
-                  <Button type="button" variant="outline" size="sm" onClick={() => { setCaptcha(makeCaptcha()); setCaptchaInput(""); }}>
-                    New
+                  <Button type="button" variant="outline" size="sm" onClick={refreshCaptcha} disabled={captchaLoading}>
+                    {captchaLoading ? "…" : "New"}
                   </Button>
                 </div>
-                <p className="text-[11px] text-muted-foreground mt-1">Quick check to confirm you're human — no email verification needed.</p>
+                <p className="text-[11px] text-muted-foreground mt-1">Quick check to confirm you're human — verified server-side.</p>
               </Field>
             )}
             <Button type="submit" variant="hero" size="lg" className="w-full" disabled={loading}>
