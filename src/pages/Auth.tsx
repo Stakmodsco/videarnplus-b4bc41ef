@@ -165,6 +165,24 @@ const Auth = () => {
                 <Input value={form.referral_code} onChange={(e) => setForm({ ...form, referral_code: e.target.value.toUpperCase() })} placeholder="ABCD1234" maxLength={20} />
               </Field>
             )}
+            {mode === "signup" && (
+              <Field label={`Captcha — what is ${captcha.a} + ${captcha.b}?`}>
+                <div className="flex gap-2">
+                  <Input
+                    type="number"
+                    inputMode="numeric"
+                    value={captchaInput}
+                    onChange={(e) => setCaptchaInput(e.target.value)}
+                    placeholder="Type the answer"
+                    required
+                  />
+                  <Button type="button" variant="outline" size="sm" onClick={() => { setCaptcha(makeCaptcha()); setCaptchaInput(""); }}>
+                    New
+                  </Button>
+                </div>
+                <p className="text-[11px] text-muted-foreground mt-1">Quick check to confirm you're human — no email verification needed.</p>
+              </Field>
+            )}
             <Button type="submit" variant="hero" size="lg" className="w-full" disabled={loading}>
               {loading ? "Please wait…" : mode === "signup" ? "Create account" : "Sign in"}
             </Button>
