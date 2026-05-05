@@ -12,11 +12,13 @@ import { toast } from "sonner";
 import { CheckCircle2, Circle, ShieldCheck } from "lucide-react";
 import { checkPassword, generateStrongPassword, passwordError, validateEmail, EMAIL_HINT } from "@/lib/passwordRules";
 
-const makeCaptcha = () => {
-  const a = Math.floor(Math.random() * 9) + 1;
-  const b = Math.floor(Math.random() * 9) + 1;
-  return { a, b, answer: a + b };
-};
+type Captcha = { id: string; a: number; b: number };
+
+async function fetchCaptcha(): Promise<Captcha> {
+  const { data, error } = await supabase.functions.invoke("captcha-challenge", { method: "POST" });
+  if (error) throw error;
+  return data as Captcha;
+}
 
 const Auth = () => {
   const [params] = useSearchParams();
@@ -24,8 +26,9 @@ const Auth = () => {
   const [mode, setMode] = useState<"signin" | "signup">(initialMode);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ email: "", password: "", full_name: "", referral_code: params.get("ref") ?? "" });
-  const [captcha, setCaptcha] = useState(makeCaptcha());
+  const [captcha, setCaptcha] = useState<Captcha | null>(null);
   const [captchaInput, setCaptchaInput] = useState("");
+  const [captchaLoading, setCaptchaLoading] = useState(false);
   // After a successful signup we want to switch the form into "signin" mode
   // and surface a clear "check your email" notice. We track that locally.
   const [postSignupEmail, setPostSignupEmail] = useState<string | null>(null);
@@ -33,6 +36,25 @@ const Auth = () => {
   const { user } = useAuth();
 
   useEffect(() => { if (user) navigate("/dashboard"); }, [user, navigate]);
+
+  const refreshCaptcha = async () => {
+    setCaptchaLoading(true);
+    setCaptchaInput("");
+    try {
+      setCaptcha(await fetchCaptcha());
+    } catch {
+      toast.error("Could not load captcha. Please try again.");
+      setCaptcha(null);
+    } finally {
+      setCaptchaLoading(false);
+    }
+  };
+
+  // Load a captcha when entering signup mode.
+  useEffect(() => {
+    if (mode === "signup" && !captcha) refreshCaptcha();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode]);
 
   const passwordChecks = checkPassword(form.password);
   const suggestStrongPassword = () => {
@@ -57,28 +79,33 @@ const Auth = () => {
         const pwErr = passwordError(form.password);
         if (pwErr) { toast.error(pwErr); setLoading(false); return; }
         if (!form.full_name.trim()) { toast.error("Enter your full name"); setLoading(false); return; }
-        if (Number(captchaInput) !== captcha.answer) {
-          toast.error("Captcha is incorrect — please try again.");
-          setCaptcha(makeCaptcha());
-          setCaptchaInput("");
+        if (!captcha) { toast.error("Captcha not loaded. Please refresh."); setLoading(false); return; }
+        const answerNum = Number(captchaInput);
+        if (!Number.isFinite(answerNum)) {
+          toast.error("Enter the captcha answer."); setLoading(false); return;
+        }
+
+        const { data, error } = await supabase.functions.invoke("signup", {
+          body: {
+            email: form.email.trim().toLowerCase(),
+            password: form.password,
+            full_name: form.full_name.trim(),
+            referral_code: form.referral_code || null,
+            captcha_id: captcha.id,
+            captcha_answer: answerNum,
+          },
+        });
+        if (error || (data as any)?.error) {
+          const msg = (data as any)?.error ?? error?.message ?? "Could not create account";
+          toast.error(msg);
+          await refreshCaptcha();
           setLoading(false);
           return;
         }
-
-        const { error } = await supabase.auth.signUp({
-          email: form.email.trim().toLowerCase(),
-          password: form.password,
-          options: {
-            data: { full_name: form.full_name.trim(), referral_code: form.referral_code || null },
-          },
-        });
-        if (error) throw error;
-        // Force a fresh sign-in so the user lands on the login screen as requested.
-        await supabase.auth.signOut();
         setPostSignupEmail(form.email.trim().toLowerCase());
         setMode("signin");
         setForm((f) => ({ ...f, password: "" }));
-        setCaptcha(makeCaptcha());
+        setCaptcha(null);
         setCaptchaInput("");
         toast.success("Account created — please sign in to continue.");
       } else {
@@ -167,21 +194,22 @@ const Auth = () => {
               </Field>
             )}
             {mode === "signup" && (
-              <Field label={`Captcha — what is ${captcha.a} + ${captcha.b}?`}>
+              <Field label={captcha ? `Captcha — what is ${captcha.a} + ${captcha.b}?` : "Captcha"}>
                 <div className="flex gap-2">
                   <Input
                     type="number"
                     inputMode="numeric"
                     value={captchaInput}
                     onChange={(e) => setCaptchaInput(e.target.value)}
-                    placeholder="Type the answer"
+                    placeholder={captcha ? "Type the answer" : "Loading…"}
                     required
+                    disabled={!captcha || captchaLoading}
                   />
-                  <Button type="button" variant="outline" size="sm" onClick={() => { setCaptcha(makeCaptcha()); setCaptchaInput(""); }}>
-                    New
+                  <Button type="button" variant="outline" size="sm" onClick={refreshCaptcha} disabled={captchaLoading}>
+                    {captchaLoading ? "…" : "New"}
                   </Button>
                 </div>
-                <p className="text-[11px] text-muted-foreground mt-1">Quick check to confirm you're human — no email verification needed.</p>
+                <p className="text-[11px] text-muted-foreground mt-1">Quick check to confirm you're human — verified server-side.</p>
               </Field>
             )}
             <Button type="submit" variant="hero" size="lg" className="w-full" disabled={loading}>
