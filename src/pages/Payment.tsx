@@ -78,11 +78,28 @@ const Payment = () => {
   const [countryOpen, setCountryOpen] = useState(false);
   const navigate = useNavigate();
 
+  // Hydrate from localStorage cache first to avoid blocking on the network.
   useEffect(() => {
+    try {
+      const cached = localStorage.getItem("monetra:app_settings");
+      if (cached) setSettings(JSON.parse(cached));
+    } catch { /* ignore */ }
     supabase.from("app_settings").select("*").then(({ data }) => {
-      const m: any = {}; data?.forEach((r: any) => (m[r.key] = r.value)); setSettings(m);
+      const m: any = {}; data?.forEach((r: any) => (m[r.key] = r.value));
+      setSettings(m);
+      try { localStorage.setItem("monetra:app_settings", JSON.stringify(m)); } catch { /* ignore */ }
     });
   }, []);
+
+  // Cache the resolved payment-method list per country so revisits are instant.
+  useEffect(() => {
+    if (!country) return;
+    try {
+      const key = `monetra:methods:${country}`;
+      const list = COUNTRIES.find((c) => c.id === country)?.methods.map((m) => ({ id: m.id, label: m.label })) ?? [];
+      localStorage.setItem(key, JSON.stringify(list));
+    } catch { /* ignore */ }
+  }, [country]);
 
   useEffect(() => {
     if (!user) return;
