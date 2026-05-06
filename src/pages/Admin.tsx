@@ -375,7 +375,7 @@ const TaskCatalogPanel = () => {
                   </div>
                   {t.description && <div className="text-xs text-muted-foreground truncate">{t.description}</div>}
                   <div className="text-[11px] text-muted-foreground mt-0.5">
-                    {t.task_type} · L{t.min_level}+ · ${Number(t.reward).toFixed(2)}
+                    {t.task_type} · L{t.min_level}+ · {format(t.reward)}
                   </div>
                 </div>
                 <Button size="sm" variant="ghost" onClick={() => toggleActive(t.id, t.active)}>
