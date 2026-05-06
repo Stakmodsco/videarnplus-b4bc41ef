@@ -21,6 +21,8 @@ import Profile from "./pages/Profile.tsx";
 import Earnings from "./pages/Earnings.tsx";
 import Payment from "./pages/Payment.tsx";
 import DailyCheckin from "./pages/DailyCheckin.tsx";
+import ForgotPassword from "./pages/ForgotPassword.tsx";
+import ResetPassword from "./pages/ResetPassword.tsx";
 import { SupportBot } from "@/components/SupportBot";
 import { IdleLogoutGuard } from "@/components/IdleLogoutGuard";
 import { AuthNudgeModal } from "@/components/AuthNudgeModal";
