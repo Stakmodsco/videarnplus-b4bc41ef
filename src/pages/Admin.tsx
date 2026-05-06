@@ -14,6 +14,7 @@ import { COUNTRIES } from "@/lib/paymentMethods";
 
 const Admin = () => {
   const { user, loading } = useAuth();
+  const { format } = useCurrency();
   const isAdmin = useIsAdmin(user?.id);
   const [adminCheckDone, setAdminCheckDone] = useState(false);
   const [upgrades, setUpgrades] = useState<any[]>([]);
