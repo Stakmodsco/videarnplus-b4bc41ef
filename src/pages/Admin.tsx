@@ -278,6 +278,7 @@ const AdminInvitePanel = ({ inviteCode, onRotated }: { inviteCode: string | unde
 };
 
 const TaskCatalogPanel = () => {
+  const { format } = useCurrency();
   const [tasks, setTasks] = useState<any[]>([]);
   const [draft, setDraft] = useState({ title: "", description: "", task_type: "watch", reward: "0.10", min_level: "1" });
   const [busy, setBusy] = useState(false);
