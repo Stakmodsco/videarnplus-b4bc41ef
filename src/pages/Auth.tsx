@@ -133,7 +133,7 @@ const Auth = () => {
           <div className="mb-6">
             <h1 className="font-display text-3xl font-semibold">{mode === "signup" ? "Create your account" : "Welcome back"}</h1>
             <p className="text-muted-foreground text-sm mt-1">
-              {mode === "signup" ? "Get a $20 welcome bonus added to your locked balance instantly." : "Sign in to your Cheddar4u dashboard."}
+              {mode === "signup" ? `Get a ${format(20)} welcome bonus added to your balance instantly.` : "Sign in to your Cheddar4u dashboard."}
             </p>
           </div>
 
