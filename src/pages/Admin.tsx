@@ -111,7 +111,7 @@ const Admin = () => {
                     <tr key={u.id} className="border-t border-border align-top">
                       <Td><div>{u.profiles?.full_name || "—"}</div><div className="text-xs text-muted-foreground">{u.profiles?.email}</div></Td>
                       <Td>L{u.target_level}</Td>
-                      <Td>${Number(u.amount).toFixed(2)}</Td>
+                      <Td>{format(u.amount)}</Td>
                       <Td className="max-w-sm"><PaymentDetails method={u.payment_method} notes={u.notes} /></Td>
                       <Td><StatusBadge status={u.status} /></Td>
                       <Td className="text-xs text-muted-foreground">{new Date(u.created_at).toLocaleString()}</Td>
