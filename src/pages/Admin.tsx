@@ -6,12 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth, useIsAdmin } from "@/hooks/useAuth";
+import { useCurrency } from "@/hooks/useCurrency";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Check, Copy, Eye, Flag, RefreshCw, X } from "lucide-react";
+import { AlertTriangle, Check, Copy, Eye, Flag, RefreshCw, X } from "lucide-react";
+import { COUNTRIES } from "@/lib/paymentMethods";
 
 const Admin = () => {
   const { user, loading } = useAuth();
+  const { format } = useCurrency();
   const isAdmin = useIsAdmin(user?.id);
   const [adminCheckDone, setAdminCheckDone] = useState(false);
   const [upgrades, setUpgrades] = useState<any[]>([]);
@@ -90,11 +93,13 @@ const Admin = () => {
         <h1 className="font-display text-4xl font-semibold mb-8">Operations console</h1>
 
         <Tabs defaultValue="upgrades">
-          <TabsList className="mb-6">
+          <TabsList className="mb-6 flex-wrap h-auto">
             <TabsTrigger value="upgrades">Upgrades <Pill>{pendingUpgrades.length}</Pill></TabsTrigger>
             <TabsTrigger value="withdrawals">Withdrawals <Pill>{pendingWithdrawals.length}</Pill></TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="tasks">Tasks</TabsTrigger>
+            <TabsTrigger value="payments">Payments</TabsTrigger>
+            <TabsTrigger value="alerts">Alerts</TabsTrigger>
             <TabsTrigger value="admins">Admins</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
@@ -108,7 +113,7 @@ const Admin = () => {
                     <tr key={u.id} className="border-t border-border align-top">
                       <Td><div>{u.profiles?.full_name || "—"}</div><div className="text-xs text-muted-foreground">{u.profiles?.email}</div></Td>
                       <Td>L{u.target_level}</Td>
-                      <Td>${Number(u.amount).toFixed(2)}</Td>
+                      <Td>{format(u.amount)}</Td>
                       <Td className="max-w-sm"><PaymentDetails method={u.payment_method} notes={u.notes} /></Td>
                       <Td><StatusBadge status={u.status} /></Td>
                       <Td className="text-xs text-muted-foreground">{new Date(u.created_at).toLocaleString()}</Td>
@@ -137,7 +142,7 @@ const Admin = () => {
                   <tbody>{withdrawals.map((w) => (
                     <tr key={w.id} className="border-t border-border align-top">
                       <Td><div>{w.profiles?.full_name || "—"}</div><div className="text-xs text-muted-foreground">{w.profiles?.email}</div></Td>
-                      <Td className="font-medium">${Number(w.amount).toFixed(2)}</Td>
+                      <Td className="font-medium">{format(w.amount)}</Td>
                       <Td className="capitalize">{w.payout_method}</Td>
                       <Td className="max-w-xs"><div className="text-xs text-muted-foreground whitespace-pre-wrap">{w.payout_details}</div></Td>
                       <Td><StatusBadge status={w.status} /></Td>
@@ -165,9 +170,9 @@ const Admin = () => {
                     <Td>{u.full_name || "—"} {u.flagged && <Flag className="inline h-3 w-3 text-destructive" />}</Td>
                     <Td className="text-xs">{u.email}</Td>
                     <Td>L{u.level}</Td>
-                    <Td>${Number(u.balance).toFixed(2)}</Td>
-                    <Td>${Number(u.locked_balance).toFixed(2)}</Td>
-                    <Td>${Number(u.total_earnings).toFixed(2)}</Td>
+                    <Td>{format(u.balance)}</Td>
+                    <Td>{format(u.locked_balance)}</Td>
+                    <Td>{format(u.total_earnings)}</Td>
                     <Td className="font-mono text-xs">{u.referral_code}</Td>
                     <Td><Button size="sm" variant="ghost" onClick={() => toggleFlag(u.id, u.flagged)}><Flag className="h-4 w-4" /></Button></Td>
                   </tr>))}</tbody>
@@ -177,6 +182,18 @@ const Admin = () => {
 
           <TabsContent value="tasks">
             <TaskCatalogPanel />
+          </TabsContent>
+
+          <TabsContent value="payments">
+            <PaymentMethodsPanel
+              overrides={settings.payment_methods_overrides ?? {}}
+              version={settings.payment_config_version ?? 1}
+              onSave={loadAll}
+            />
+          </TabsContent>
+
+          <TabsContent value="alerts">
+            <AlertsPanel />
           </TabsContent>
 
           <TabsContent value="admins">
@@ -275,6 +292,7 @@ const AdminInvitePanel = ({ inviteCode, onRotated }: { inviteCode: string | unde
 };
 
 const TaskCatalogPanel = () => {
+  const { format } = useCurrency();
   const [tasks, setTasks] = useState<any[]>([]);
   const [draft, setDraft] = useState({ title: "", description: "", task_type: "watch", reward: "0.10", min_level: "1" });
   const [busy, setBusy] = useState(false);
@@ -372,7 +390,7 @@ const TaskCatalogPanel = () => {
                   </div>
                   {t.description && <div className="text-xs text-muted-foreground truncate">{t.description}</div>}
                   <div className="text-[11px] text-muted-foreground mt-0.5">
-                    {t.task_type} · L{t.min_level}+ · ${Number(t.reward).toFixed(2)}
+                    {t.task_type} · L{t.min_level}+ · {format(t.reward)}
                   </div>
                 </div>
                 <Button size="sm" variant="ghost" onClick={() => toggleActive(t.id, t.active)}>
@@ -430,4 +448,243 @@ const StatusBadge = ({ status }: { status: string }) => {
   return <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border ${map[status] ?? "bg-secondary"}`}>{status}</span>;
 };
 
+// ────────────────────────────────────────────────────────────────────────────
+// Alerts panel — repeated failed captcha + throttled signups
+// ────────────────────────────────────────────────────────────────────────────
+const AlertsPanel = () => {
+  const [rows, setRows] = useState<any[]>([]);
+  const [stats, setStats] = useState({ throttled: 0, captcha: 0, validation: 0, success: 0 });
+  const [loading, setLoading] = useState(false);
+  const [topIps, setTopIps] = useState<{ ip: string; count: number; lastReason: string }[]>([]);
+
+  const load = async () => {
+    setLoading(true);
+    const since = new Date(Date.now() - 24 * 3600_000).toISOString();
+    const { data } = await supabase
+      .from("signup_attempts")
+      .select("*")
+      .gte("created_at", since)
+      .order("created_at", { ascending: false })
+      .limit(500);
+    const list = data ?? [];
+    setRows(list);
+    const s = { throttled: 0, captcha: 0, validation: 0, success: 0 };
+    const ipMap = new Map<string, { count: number; lastReason: string }>();
+    for (const r of list) {
+      if (r.kind === "throttled") s.throttled++;
+      else if (r.kind === "captcha_failed") s.captcha++;
+      else if (r.kind === "validation") s.validation++;
+      else if (r.kind === "success") s.success++;
+      if (!r.success && r.ip) {
+        const e = ipMap.get(r.ip) ?? { count: 0, lastReason: r.reason ?? r.kind };
+        e.count++;
+        ipMap.set(r.ip, e);
+      }
+    }
+    setStats(s);
+    setTopIps([...ipMap.entries()]
+      .map(([ip, v]) => ({ ip, count: v.count, lastReason: v.lastReason }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10));
+    setLoading(false);
+  };
+  useEffect(() => { load(); }, []);
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <StatCard label="Throttled" value={stats.throttled} tone="destructive" />
+        <StatCard label="Captcha failed" value={stats.captcha} tone="warning" />
+        <StatCard label="Validation errors" value={stats.validation} tone="muted" />
+        <StatCard label="Successful signups" value={stats.success} tone="primary" />
+      </div>
+
+      <Card className="glass-card p-6 rounded-xl">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="font-display text-lg font-semibold flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4 text-warning" /> Repeat offenders (last 24h)
+            </h3>
+            <p className="text-xs text-muted-foreground">IPs with multiple failed attempts. Investigate any with 5+.</p>
+          </div>
+          <Button size="sm" variant="outline" onClick={load} disabled={loading}>
+            <RefreshCw className={`h-4 w-4 mr-1 ${loading ? "animate-spin" : ""}`} /> Refresh
+          </Button>
+        </div>
+        {topIps.length === 0 ? <Empty label="No suspicious activity" /> : (
+          <table className="w-full text-sm">
+            <thead className="text-xs uppercase text-muted-foreground"><tr><Th>IP</Th><Th>Failures</Th><Th>Last reason</Th></tr></thead>
+            <tbody>
+              {topIps.map((t) => (
+                <tr key={t.ip} className="border-t border-border">
+                  <Td className="font-mono text-xs">{t.ip}</Td>
+                  <Td><span className={`font-medium ${t.count >= 5 ? "text-destructive" : "text-warning"}`}>{t.count}</span></Td>
+                  <Td className="text-xs text-muted-foreground">{t.lastReason}</Td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </Card>
+
+      <Card className="glass-card p-6 rounded-xl">
+        <h3 className="font-display text-lg font-semibold mb-4">Recent events</h3>
+        {rows.length === 0 ? <Empty label="No signup events yet" /> : (
+          <div className="overflow-auto max-h-[480px]">
+            <table className="w-full text-xs">
+              <thead className="text-[10px] uppercase text-muted-foreground sticky top-0 bg-background">
+                <tr><Th>When</Th><Th>Kind</Th><Th>Reason</Th><Th>Email</Th><Th>IP</Th></tr>
+              </thead>
+              <tbody>
+                {rows.map((r) => (
+                  <tr key={r.id} className="border-t border-border">
+                    <Td className="text-muted-foreground whitespace-nowrap">{new Date(r.created_at).toLocaleString()}</Td>
+                    <Td><KindBadge kind={r.kind} success={r.success} /></Td>
+                    <Td className="text-muted-foreground">{r.reason ?? "—"}</Td>
+                    <Td className="font-mono">{r.email ?? "—"}</Td>
+                    <Td className="font-mono text-muted-foreground">{r.ip}</Td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
+    </div>
+  );
+};
+
+const StatCard = ({ label, value, tone }: { label: string; value: number; tone: "primary" | "warning" | "destructive" | "muted" }) => {
+  const cls = {
+    primary: "text-primary",
+    warning: "text-warning",
+    destructive: "text-destructive",
+    muted: "text-muted-foreground",
+  }[tone];
+  return (
+    <Card className="glass-card p-4 rounded-xl">
+      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
+      <div className={`font-display text-3xl tabular-nums mt-1 ${cls}`}>{value}</div>
+    </Card>
+  );
+};
+
+const KindBadge = ({ kind, success }: { kind: string; success: boolean }) => {
+  const map: Record<string, string> = {
+    success: "bg-primary/15 text-primary border-primary/30",
+    throttled: "bg-destructive/15 text-destructive border-destructive/30",
+    captcha_failed: "bg-warning/15 text-warning border-warning/30",
+    validation: "bg-secondary text-muted-foreground border-border",
+    auth_error: "bg-destructive/15 text-destructive border-destructive/30",
+  };
+  const k = success ? "success" : kind;
+  return <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border ${map[k] ?? "bg-secondary"}`}>{k.replace(/_/g, " ")}</span>;
+};
+
+// ────────────────────────────────────────────────────────────────────────────
+// Payment methods editor — per-country overrides + version preview
+// ────────────────────────────────────────────────────────────────────────────
+const PaymentMethodsPanel = ({ overrides, version, onSave }: { overrides: Record<string, any>; version: any; onSave: () => void }) => {
+  const [draft, setDraft] = useState<Record<string, any>>(overrides ?? {});
+  const [country, setCountry] = useState<string>(COUNTRIES[1]?.id ?? "ZA");
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => { setDraft(overrides ?? {}); }, [overrides]);
+
+  const baseCountry = COUNTRIES.find((c) => c.id === country);
+  const baseMethodIds = baseCountry?.methods.map((m) => m.id) ?? [];
+  const override = draft[country] ?? {};
+  const enabledIds: string[] = override.enabled_methods ?? baseMethodIds;
+
+  const toggleMethod = (id: string) => {
+    const next = enabledIds.includes(id) ? enabledIds.filter((x) => x !== id) : [...enabledIds, id];
+    setDraft({ ...draft, [country]: { ...override, enabled_methods: next } });
+  };
+
+  const save = async () => {
+    setSaving(true);
+    const newVersion = Number(version ?? 1) + 1;
+    const { error: e1 } = await supabase
+      .from("app_settings")
+      .update({ value: draft, updated_at: new Date().toISOString() })
+      .eq("key", "payment_methods_overrides");
+    const { error: e2 } = await supabase
+      .from("app_settings")
+      .update({ value: newVersion, updated_at: new Date().toISOString() })
+      .eq("key", "payment_config_version");
+    setSaving(false);
+    if (e1 || e2) return toast.error((e1 ?? e2)!.message);
+    toast.success(`Saved — config version bumped to v${newVersion}. All clients will refresh their cache.`);
+    onSave();
+  };
+
+  return (
+    <div className="grid lg:grid-cols-2 gap-4">
+      <Card className="glass-card p-6 rounded-xl">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-display text-lg font-semibold">Payment methods by country</h3>
+          <span className="text-xs text-muted-foreground">Config v{String(version ?? 1)}</span>
+        </div>
+        <p className="text-xs text-muted-foreground mb-4">
+          Toggle which methods appear for users in each country. Saving bumps the config version, which invalidates every client's cached method list on next load.
+        </p>
+        <div className="space-y-3">
+          <div>
+            <label className="text-xs uppercase tracking-wide text-muted-foreground">Country</label>
+            <select value={country} onChange={(e) => setCountry(e.target.value)}
+              className="mt-1 w-full h-10 rounded-md border border-input bg-background px-2 text-sm">
+              {COUNTRIES.map((c) => <option key={c.id} value={c.id}>{c.flag} {c.label}</option>)}
+            </select>
+          </div>
+          <div className="border border-border rounded-lg divide-y divide-border">
+            {(baseCountry?.methods ?? []).map((m) => (
+              <label key={m.id} className="flex items-center gap-3 p-3 cursor-pointer hover:bg-secondary/40">
+                <input
+                  type="checkbox"
+                  checked={enabledIds.includes(m.id)}
+                  onChange={() => toggleMethod(m.id)}
+                  className="h-4 w-4"
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium">{m.label}</div>
+                  <div className="text-[11px] text-muted-foreground font-mono">{m.id}</div>
+                </div>
+              </label>
+            ))}
+          </div>
+          <Button onClick={save} disabled={saving} variant="hero" className="w-full">
+            {saving ? "Saving…" : "Save & bump version"}
+          </Button>
+        </div>
+      </Card>
+
+      <Card className="glass-card p-6 rounded-xl">
+        <h3 className="font-display text-lg font-semibold mb-3">Preview</h3>
+        <p className="text-xs text-muted-foreground mb-4">
+          What users in <span className="font-medium text-foreground">{baseCountry?.label}</span> will see after saving.
+          Cache key on each client becomes <code className="text-primary font-mono">monetra:methods:v{Number(version ?? 1) + 1}:{country}</code>.
+        </p>
+        <div className="space-y-2">
+          {enabledIds.length === 0 && (
+            <div className="text-sm text-warning">⚠ No methods enabled — users in this country won't be able to upgrade.</div>
+          )}
+          {enabledIds.map((id) => {
+            const m = baseCountry?.methods.find((x) => x.id === id);
+            if (!m) return null;
+            return (
+              <div key={id} className="border border-border rounded-lg p-3 bg-secondary/20">
+                <div className="text-sm font-medium">{m.label}</div>
+                {m.description && <div className="text-xs text-muted-foreground mt-1 line-clamp-2">{m.description}</div>}
+              </div>
+            );
+          })}
+        </div>
+        <details className="mt-5">
+          <summary className="text-xs text-muted-foreground cursor-pointer">Raw JSON override</summary>
+          <pre className="mt-2 text-[10px] bg-background border border-border rounded p-2 overflow-auto max-h-60">{JSON.stringify(draft, null, 2)}</pre>
+        </details>
+      </Card>
+    </div>
+  );
+};
 export default Admin;

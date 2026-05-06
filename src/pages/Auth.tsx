@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { PasswordInput } from "@/components/PasswordInput";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useCurrency } from "@/hooks/useCurrency";
 import { toast } from "sonner";
 import { CheckCircle2, Circle, ShieldCheck } from "lucide-react";
 import { checkPassword, generateStrongPassword, passwordError, validateEmail, EMAIL_HINT } from "@/lib/passwordRules";
@@ -34,6 +35,7 @@ const Auth = () => {
   const [postSignupEmail, setPostSignupEmail] = useState<string | null>(null);
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { format } = useCurrency();
 
   useEffect(() => { if (user) navigate("/dashboard"); }, [user, navigate]);
 
@@ -131,7 +133,7 @@ const Auth = () => {
           <div className="mb-6">
             <h1 className="font-display text-3xl font-semibold">{mode === "signup" ? "Create your account" : "Welcome back"}</h1>
             <p className="text-muted-foreground text-sm mt-1">
-              {mode === "signup" ? "Get a $20 welcome bonus added to your locked balance instantly." : "Sign in to your Cheddar4u dashboard."}
+              {mode === "signup" ? `Get a ${format(20)} welcome bonus added to your balance instantly.` : "Sign in to your Cheddar4u dashboard."}
             </p>
           </div>
 
@@ -223,6 +225,11 @@ const Auth = () => {
               <>New to Cheddar4u? <button className="text-primary hover:underline" onClick={() => { setMode("signup"); setPostSignupEmail(null); }}>Create one</button></>
             )}
           </div>
+          {mode === "signin" && (
+            <div className="mt-3 text-center">
+              <Link to="/forgot-password" className="text-xs text-primary hover:underline">Forgot your password?</Link>
+            </div>
+          )}
           <div className="mt-4 text-center">
             <Link to="/" className="text-xs text-muted-foreground hover:text-foreground">← Back to home</Link>
           </div>
