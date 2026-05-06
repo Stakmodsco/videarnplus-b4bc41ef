@@ -168,9 +168,9 @@ const Admin = () => {
                     <Td>{u.full_name || "—"} {u.flagged && <Flag className="inline h-3 w-3 text-destructive" />}</Td>
                     <Td className="text-xs">{u.email}</Td>
                     <Td>L{u.level}</Td>
-                    <Td>${Number(u.balance).toFixed(2)}</Td>
-                    <Td>${Number(u.locked_balance).toFixed(2)}</Td>
-                    <Td>${Number(u.total_earnings).toFixed(2)}</Td>
+                    <Td>{format(u.balance)}</Td>
+                    <Td>{format(u.locked_balance)}</Td>
+                    <Td>{format(u.total_earnings)}</Td>
                     <Td className="font-mono text-xs">{u.referral_code}</Td>
                     <Td><Button size="sm" variant="ghost" onClick={() => toggleFlag(u.id, u.flagged)}><Flag className="h-4 w-4" /></Button></Td>
                   </tr>))}</tbody>
