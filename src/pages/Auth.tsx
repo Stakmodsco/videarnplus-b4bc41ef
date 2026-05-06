@@ -225,6 +225,11 @@ const Auth = () => {
               <>New to Cheddar4u? <button className="text-primary hover:underline" onClick={() => { setMode("signup"); setPostSignupEmail(null); }}>Create one</button></>
             )}
           </div>
+          {mode === "signin" && (
+            <div className="mt-3 text-center">
+              <Link to="/forgot-password" className="text-xs text-primary hover:underline">Forgot your password?</Link>
+            </div>
+          )}
           <div className="mt-4 text-center">
             <Link to="/" className="text-xs text-muted-foreground hover:text-foreground">← Back to home</Link>
           </div>
