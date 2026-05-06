@@ -40,6 +40,7 @@ Deno.serve(async (req) => {
     .eq("ip", ip)
     .gte("created_at", since);
   if ((attemptCount ?? 0) >= 5) {
+    await sb.from("signup_attempts").insert({ ip, email: null, success: false, kind: "throttled", reason: "ip_rate_limit" });
     return json({ error: "Too many signup attempts from this network. Please try again later." }, 429);
   }
 
