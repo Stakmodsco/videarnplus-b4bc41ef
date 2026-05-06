@@ -35,6 +35,7 @@ const Auth = () => {
   const [postSignupEmail, setPostSignupEmail] = useState<string | null>(null);
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { format } = useCurrency();
 
   useEffect(() => { if (user) navigate("/dashboard"); }, [user, navigate]);
 
