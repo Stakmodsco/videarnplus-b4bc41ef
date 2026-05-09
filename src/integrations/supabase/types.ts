@@ -190,6 +190,42 @@ export type Database = {
         }
         Relationships: []
       }
+      support_tickets: {
+        Row: {
+          attachments: string[]
+          created_at: string
+          email: string | null
+          id: string
+          message: string
+          status: string
+          subject: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          attachments?: string[]
+          created_at?: string
+          email?: string | null
+          id?: string
+          message: string
+          status?: string
+          subject?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          attachments?: string[]
+          created_at?: string
+          email?: string | null
+          id?: string
+          message?: string
+          status?: string
+          subject?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       task_catalog: {
         Row: {
           active: boolean
