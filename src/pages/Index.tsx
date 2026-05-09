@@ -158,7 +158,6 @@ const Index = () => {
         <SectionHeader eyebrow="FAQ" title="Earning rules, explained." />
         <Accordion type="single" collapsible className="mt-10">
           {[
-            { q: "How fast can I withdraw?", a: `Minimum withdrawal is ${format(50)}. Withdrawals are automated by the system and only take minutes to reach your wallet.` },
             { q: "Can I earn without upgrading?", a: "Level 0 (free) members get a small daily check-in reward and can browse the platform. Watch & Earn and Spin & Win require Level 1+." },
             { q: "What happens if I miss a check-in?", a: "Missed days do not stack. The check-in resets 24 hours after your last claim — there is no streak bonus or backlog." },
             { q: "How do referrals work?", a: "Each member gets a unique referral code. You earn a 10% commission on Level-1 referrals' approved upgrades and a smaller commission on Level-2 referrals. Daily referral cap applies." },
