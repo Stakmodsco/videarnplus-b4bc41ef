@@ -197,6 +197,10 @@ const Admin = () => {
             <AlertsPanel />
           </TabsContent>
 
+          <TabsContent value="tickets">
+            <SupportTicketsPanel />
+          </TabsContent>
+
           <TabsContent value="admins">
             <AdminInvitePanel inviteCode={settings.admin_invite_code} onRotated={loadAll} />
           </TabsContent>
