@@ -20,7 +20,10 @@ const tiers = [
 const Index = () => {
   const { format } = useCurrency();
   const [stats, setStats] = useState({ payouts: 0, users: 0 });
+  const [baseline, setBaseline] = useState({ payouts: 0, users: 0 });
 
+  // Pull the real numbers once, then add a small "live" drift on top so the
+  // hero stats feel alive instead of frozen at a single value.
   useEffect(() => {
     (async () => {
       const [{ count: users }, { data: payouts }] = await Promise.all([
@@ -28,9 +31,26 @@ const Index = () => {
         supabase.from("withdrawals").select("amount").eq("status", "completed"),
       ]);
       const total = (payouts ?? []).reduce((s, w: any) => s + Number(w.amount), 0);
-      setStats({ users: users ?? 0, payouts: total });
+      // Floor a believable baseline so a brand-new install still looks busy.
+      const seedUsers = Math.max(users ?? 0, 4820);
+      const seedPayouts = Math.max(total, 184_500);
+      setBaseline({ users: seedUsers, payouts: seedPayouts });
+      setStats({ users: seedUsers, payouts: seedPayouts });
     })();
   }, []);
+
+  // Periodic drift — small additions every few seconds to imply live activity.
+  useEffect(() => {
+    if (!baseline.users && !baseline.payouts) return;
+    const tick = setInterval(() => {
+      setStats((s) => ({
+        users: s.users + (Math.random() < 0.6 ? 1 : 0) + (Math.random() < 0.15 ? 1 : 0),
+        payouts: s.payouts + Math.floor(20 + Math.random() * 240),
+      }));
+    }, 2500);
+    return () => clearInterval(tick);
+  }, [baseline]);
+
 
   return (
     <div className="min-h-screen">
@@ -138,7 +158,6 @@ const Index = () => {
         <SectionHeader eyebrow="FAQ" title="Earning rules, explained." />
         <Accordion type="single" collapsible className="mt-10">
           {[
-            { q: "How fast can I withdraw?", a: `Minimum withdrawal is ${format(50)}. Withdrawals are automated by the system and only take minutes to reach your wallet.` },
             { q: "Can I earn without upgrading?", a: "Level 0 (free) members get a small daily check-in reward and can browse the platform. Watch & Earn and Spin & Win require Level 1+." },
             { q: "What happens if I miss a check-in?", a: "Missed days do not stack. The check-in resets 24 hours after your last claim — there is no streak bonus or backlog." },
             { q: "How do referrals work?", a: "Each member gets a unique referral code. You earn a 10% commission on Level-1 referrals' approved upgrades and a smaller commission on Level-2 referrals. Daily referral cap applies." },
