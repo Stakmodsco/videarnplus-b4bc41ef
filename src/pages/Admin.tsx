@@ -9,7 +9,7 @@ import { useAuth, useIsAdmin } from "@/hooks/useAuth";
 import { useCurrency } from "@/hooks/useCurrency";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { AlertTriangle, Check, Copy, Eye, Flag, RefreshCw, X } from "lucide-react";
+import { AlertTriangle, Check, Copy, Eye, Flag, Inbox, Paperclip, RefreshCw, Search, X } from "lucide-react";
 import { COUNTRIES } from "@/lib/paymentMethods";
 
 const Admin = () => {
