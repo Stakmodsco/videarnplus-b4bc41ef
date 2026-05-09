@@ -100,6 +100,7 @@ const Admin = () => {
             <TabsTrigger value="tasks">Tasks</TabsTrigger>
             <TabsTrigger value="payments">Payments</TabsTrigger>
             <TabsTrigger value="alerts">Alerts</TabsTrigger>
+            <TabsTrigger value="tickets"><Inbox className="h-3.5 w-3.5 mr-1" /> Tickets</TabsTrigger>
             <TabsTrigger value="admins">Admins</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
