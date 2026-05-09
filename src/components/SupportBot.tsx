@@ -135,7 +135,7 @@ export const SupportBot = () => {
         email: ticketEmail || null,
         subject: ticketSubject || null,
         message: ticketBody,
-        attachments: urls,
+        attachments: paths,
       });
       if (error) throw error;
 
