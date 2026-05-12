@@ -19,7 +19,7 @@ const GREETING: Msg = {
 };
 
 const SUGGESTIONS = [
-  "How do withdrawals work?",
+  "How do I withdraw?",
   "How do I upgrade?",
   "How do referrals pay?",
   "How do I unlock locked tasks?",
