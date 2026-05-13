@@ -104,6 +104,13 @@ const Auth = () => {
           setLoading(false);
           return;
         }
+        // ADD RECOVERY KEY CODE HERE
+        const recoveryKeys = (data as any)?.recoveryKeys;
+
+        if(recoveryKeys?.length) {
+          localStorage.setItem("generatedRecoveryKeys", JSON.stringify(recoveryKeys));
+        }
+        
         setPostSignupEmail(form.email.trim().toLowerCase());
         setMode("signin");
         setForm((f) => ({ ...f, password: "" }));
