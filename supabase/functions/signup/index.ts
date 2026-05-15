@@ -134,3 +134,4 @@ async function logAndReturn(sb: ReturnType<typeof svc>, ip: string, email: strin
   await sb.from("signup_attempts").insert({ ip, email, success: false, kind, reason });
   return json({ error }, status);
 }
+  });
