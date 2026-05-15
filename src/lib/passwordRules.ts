@@ -59,20 +59,22 @@ export function generateStrongPassword() {
   const numbers = "23456789";
   const symbols = "!@#$%^&*";
 
-  const all = upper + lower + numbers + symbols;
-
-  const required = [
+  const password = [
+    upper[Math.floor(Math.random() * upper.length)],
+    lower[Math.floor(Math.random() * lower.length)],
+    numbers[Math.floor(Math.random() * numbers.length)],
+    symbols[Math.floor(Math.random() * symbols.length)],
+    upper[Math.floor(Math.random() * upper.length)],
+    lower[Math.floor(Math.random() * lower.length)],
+    numbers[Math.floor(Math.random() * numbers.length)],
+    symbols[Math.floor(Math.random() * symbols.length)],
     upper[Math.floor(Math.random() * upper.length)],
     lower[Math.floor(Math.random() * lower.length)],
     numbers[Math.floor(Math.random() * numbers.length)],
     symbols[Math.floor(Math.random() * symbols.length)],
   ];
 
-  const remaining = Array.from({ length: 8 }, () =>
-    all[Math.floor(Math.random() * all.length)]
-  );
-
-  return [...required, ...remaining]
-    .sort(() => Math.random() - 0.5)
+  return password
+    .sort(() => crypto.getRandomValues(new Uint32Array(1))[0] - 2147483648)
     .join("");
 }
