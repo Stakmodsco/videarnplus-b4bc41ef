@@ -46,7 +46,7 @@ export function BrandLogo({ className, size = 40, premium = true }: Props) {
           strokeOpacity="0.22"
         />
       )}
-      <rect x="2" y="2" width="60" height="30" rx="14" fill={`url(#${id}-glow)`} />
+      
 
       {/* "V" mark */}
       <path
@@ -70,14 +70,14 @@ export function BrandLogo({ className, size = 40, premium = true }: Props) {
           fontFamily="ui-sans-serif, system-ui, sans-serif"
           fontSize="11"
           fontWeight="800"
-          fill="var(--primary)"
+          fill="hsl(var(--primary))"
         >
           $
         </text>
       </g>
 
       {/* top sheen */}
-      <rect x="4" y="4" width="56" height="22" rx="12" fill={`url(#${id}-sheen)`} />
+      
     </svg>
   );
 }
