@@ -1,4 +1,4 @@
-// Shared helpers for Monetra edge functions
+// Shared helpers for VidearnPlus edge functions
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 export const corsHeaders = {

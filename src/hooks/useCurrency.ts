@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, useCallback } from "react";
 import { useGeoCountry } from "@/hooks/useGeoCountry";
 import { currencyForCountry, formatMoney as fmt, type CurrencyMeta } from "@/lib/currency";
 
-const OVERRIDE_KEY = "monetra:currency-country-override";
+const OVERRIDE_KEY = "videarnplus:currency-country-override";
 
 // Returns the currency to use for the current user.
 // Resolution order:

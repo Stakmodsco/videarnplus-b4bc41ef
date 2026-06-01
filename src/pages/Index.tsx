@@ -71,7 +71,7 @@ const Index = () => {
               <span className="block bg-gradient-emerald bg-clip-text text-transparent"> digital activities.</span>
             </h1>
             <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl text-balance">
-              Cheddar4u is a membership rewards platform with controlled payouts, daily caps, and automated withdrawals — designed to feel like a real fintech product, not a quick-money scheme.
+              VidearnPlus is a membership rewards platform with controlled payouts, daily caps, and automated withdrawals — designed to feel like a real fintech product, not a quick-money scheme.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-3">
               <Button asChild size="xl" variant="hero">
@@ -93,7 +93,7 @@ const Index = () => {
 
       {/* How it works */}
       <section id="how" className="container py-24">
-        <SectionHeader eyebrow="How Cheddar4u works" title="Three steps. No surprises." />
+        <SectionHeader eyebrow="How VidearnPlus works" title="Three steps. No surprises." />
         <div className="grid md:grid-cols-3 gap-6 mt-12">
           {[
             { icon: Users, title: "1. Create an account", desc: "Sign up free at Level 0. Optional referral code links you to your inviter." },
@@ -161,7 +161,7 @@ const Index = () => {
             { q: "Can I earn without upgrading?", a: "Level 0 (free) members get a small daily check-in reward and can browse the platform. Watch & Earn and Spin & Win require Level 1+." },
             { q: "What happens if I miss a check-in?", a: "Missed days do not stack. The check-in resets 24 hours after your last claim — there is no streak bonus or backlog." },
             { q: "How do referrals work?", a: "Each member gets a unique referral code. You earn a 10% commission on Level-1 referrals' approved upgrades and a smaller commission on Level-2 referrals. Daily referral cap applies." },
-            { q: "Why are caps strict?", a: "To keep Cheddar4u sustainable. Unlimited rewards always collapse. Caps let us keep paying members reliably for the long term." },
+            { q: "Why are caps strict?", a: "To keep VidearnPlus sustainable. Unlimited rewards always collapse. Caps let us keep paying members reliably for the long term." },
           ].map((f, i) => (
             <AccordionItem key={i} value={`item-${i}`} className="border-border">
               <AccordionTrigger className="text-left hover:no-underline">{f.q}</AccordionTrigger>
@@ -175,7 +175,7 @@ const Index = () => {
 
       <footer className="border-t border-border/60 mt-12">
         <div className="container py-10 flex flex-col md:flex-row justify-between gap-4 text-sm text-muted-foreground">
-          <div>© {new Date().getFullYear()} Cheddar4u. All rights reserved.</div>
+          <div>© {new Date().getFullYear()} VidearnPlus. All rights reserved.</div>
           <div>Earnings depend on activity and tier. Subject to platform terms.</div>
         </div>
       </footer>

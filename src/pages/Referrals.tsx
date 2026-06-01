@@ -124,7 +124,7 @@ const ShareLinkCard = ({ code }: { code: string }) => {
   };
   const share = async () => {
     if (navigator.share) {
-      try { await navigator.share({ title: "Join me on Cheddar4u", text: "Earn rewards with me on Cheddar4u:", url: link }); }
+      try { await navigator.share({ title: "Join me on VidearnPlus", text: "Earn rewards with me on VidearnPlus:", url: link }); }
       catch { /* user cancelled */ }
     } else copy(link, "Share link");
   };

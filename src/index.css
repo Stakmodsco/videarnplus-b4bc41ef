@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    /* Monetra — Light: indigo / violet brand from logo */
+    /* VidearnPlus — Light: indigo / violet brand from logo */
     --background: 240 30% 98%;
     --foreground: 240 50% 8%;
 
@@ -71,7 +71,7 @@
   }
 
   .dark {
-    /* Monetra — Dark: deep navy + indigo/violet (matches logo background) */
+    /* VidearnPlus — Dark: deep navy + indigo/violet (matches logo background) */
     --background: 240 50% 6%;
     --foreground: 240 25% 96%;
 

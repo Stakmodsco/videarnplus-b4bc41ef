@@ -10,8 +10,8 @@ import { Sparkles, LogIn, UserPlus } from "lucide-react";
 // until they either authenticate or dismiss permanently for the session.
 const FIRST_DELAY_MS = 8_000;
 const REPEAT_DELAY_MS = 60_000;
-const HAS_ACCOUNT_KEY = "cheddar4u:has-account";
-const SESSION_DISMISSED_KEY = "cheddar4u:nudge-dismissed";
+const HAS_ACCOUNT_KEY = "videarnplus:has-account";
+const SESSION_DISMISSED_KEY = "videarnplus:nudge-dismissed";
 
 const PUBLIC_ROUTES = new Set(["/", "/auth"]);
 
@@ -64,7 +64,7 @@ export const AuthNudgeModal = () => {
             {hasAccount ? <LogIn className="h-6 w-6 text-primary" /> : <Sparkles className="h-6 w-6 text-primary" />}
           </div>
           <DialogTitle className="font-display text-2xl">
-            {hasAccount ? "Welcome back to Cheddar4u" : "Claim your $20 signup bonus"}
+            {hasAccount ? "Welcome back to VidearnPlus" : "Claim your $20 signup bonus"}
           </DialogTitle>
           <DialogDescription>
             {hasAccount

@@ -14,7 +14,7 @@ const SNOOZE_MS = 60_000;
 // Per-tab key used to remember that the user clicked "Upgrade" — the nag
 // stays paused until either the upgrade lands (level > 0) OR the user
 // explicitly cancels.
-const UPGRADE_INTENT_KEY = "monetra:upgradeIntent";
+const UPGRADE_INTENT_KEY = "videarnplus:upgradeIntent";
 
 export const UpgradeNagModal = () => {
   const { user, loading } = useAuth();

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { findCountryByCode, type CountryEntry } from "@/lib/countries";
 
-const STORAGE_KEY = "monetra:geo-country";
+const STORAGE_KEY = "videarnplus:geo-country";
 
 // Detects the user's country from their IP via Cloudflare's no-key trace
 // endpoint (`https://www.cloudflare.com/cdn-cgi/trace`). The result is cached

@@ -19,7 +19,7 @@ const TESTIMONIALS: T[] = [
   { name: "Yara F.",  role: "Casablanca, Morocco", quote: "I love how every reward is logged transparently." },
   { name: "Hassan T.",role: "Karachi, Pakistan",   quote: "Easy onboarding. The bonus on signup was a nice touch." },
   { name: "Tariq H.", role: "Lahore, Pakistan",    quote: "Withdrawals are now actually automated and instant." },
-  { name: "Beatrice M.", role: "Lusaka, Zambia",   quote: "I tell all my friends — Cheddar4u just delivers." },
+  { name: "Beatrice M.", role: "Lusaka, Zambia",   quote: "I tell all my friends — VidearnPlus just delivers." },
   { name: "Sipho D.", role: "Durban, SA",          quote: "Transparent caps mean I always know what I'll earn." },
   { name: "Aisha L.", role: "Dakar, Senegal",      quote: "Best rewards app I've used. Period." },
 ];

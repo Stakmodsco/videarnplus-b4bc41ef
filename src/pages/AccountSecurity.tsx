@@ -44,7 +44,7 @@ const AccountSecurity = () => {
 
   const download = () => {
     const content = [
-      "Cheddar4u Recovery Keys",
+      "VidearnPlus Recovery Keys",
       "",
       "Save these keys somewhere safe.",
       "If you lose them, your account cannot be recovered.",
@@ -55,7 +55,7 @@ const AccountSecurity = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "cheddar4u-recovery-keys.txt";
+    a.download = "videarnplus-recovery-keys.txt";
     a.click();
     URL.revokeObjectURL(url);
   };

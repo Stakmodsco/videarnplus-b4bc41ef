@@ -112,7 +112,7 @@ const Auth = () => {
     if (!recoveryKeys.length) return;
 
     const content = [
-      "Cheddar4u Recovery Keys",
+      "VidearnPlus Recovery Keys",
       "",
       "Save these keys somewhere safe.",
       "If you lose them, your account cannot be recovered.",
@@ -125,7 +125,7 @@ const Auth = () => {
 
     const a = document.createElement("a");
     a.href = url;
-    a.download = "cheddar4u-recovery-keys.txt";
+    a.download = "videarnplus-recovery-keys.txt";
     a.click();
 
     URL.revokeObjectURL(url);
@@ -255,7 +255,7 @@ const Auth = () => {
                 ? `Get a ${format(
                     20
                   )} welcome bonus added to your balance instantly.`
-                : "Sign in to your Cheddar4u dashboard."}
+                : "Sign in to your VidearnPlus dashboard."}
             </p>
           </div>
 
@@ -502,7 +502,7 @@ const Auth = () => {
               </>
             ) : (
               <>
-                New to Cheddar4u?{" "}
+                New to VidearnPlus?{" "}
                 <button
                   className="text-primary hover:underline"
                   onClick={() => {
