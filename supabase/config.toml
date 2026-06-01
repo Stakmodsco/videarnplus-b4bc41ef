@@ -29,3 +29,10 @@ verify_jwt = false
 
 [functions.signup]
 verify_jwt = false
+
+[functions.recovery-reset]
+verify_jwt = false
+
+[functions.regenerate-recovery-keys]
+verify_jwt = false
+
