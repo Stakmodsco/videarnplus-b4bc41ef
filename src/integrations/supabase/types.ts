@@ -236,6 +236,7 @@ export type Database = {
           reward: number
           sort_order: number
           task_type: string
+          task_url: string | null
           title: string
           updated_at: string
         }
@@ -248,6 +249,7 @@ export type Database = {
           reward?: number
           sort_order?: number
           task_type?: string
+          task_url?: string | null
           title: string
           updated_at?: string
         }
@@ -260,6 +262,7 @@ export type Database = {
           reward?: number
           sort_order?: number
           task_type?: string
+          task_url?: string | null
           title?: string
           updated_at?: string
         }
@@ -387,6 +390,30 @@ export type Database = {
           target_level?: number | null
           type?: Database["public"]["Enums"]["txn_type"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_recovery_keys: {
+        Row: {
+          created_at: string | null
+          id: string
+          recovery_key_hash: string
+          used: boolean | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          recovery_key_hash: string
+          used?: boolean | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          recovery_key_hash?: string
+          used?: boolean | null
+          user_id?: string | null
         }
         Relationships: []
       }
