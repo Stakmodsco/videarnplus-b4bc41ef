@@ -58,37 +58,37 @@ export const AuthNudgeModal = () => {
 
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v) setOpen(false); }}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-md w-[calc(100%-2rem)] max-w-[calc(100%-2rem)] sm:w-full p-5 sm:p-6 overflow-hidden">
+        <DialogHeader className="pr-8">
           <div className="h-12 w-12 rounded-xl bg-primary/15 border border-primary/30 grid place-items-center mb-3">
             {hasAccount ? <LogIn className="h-6 w-6 text-primary" /> : <Sparkles className="h-6 w-6 text-primary" />}
           </div>
-          <DialogTitle className="font-display text-2xl">
+          <DialogTitle className="font-display text-xl sm:text-2xl break-words">
             {hasAccount ? "Welcome back to VidearnPlus" : "Claim your $20 signup bonus"}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="break-words">
             {hasAccount
               ? "Sign in to continue earning, complete today's tasks, and check on your withdrawals."
               : "Create a free account in under a minute and we'll instantly credit a $20 welcome bonus to your locked balance."}
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="flex-col sm:flex-row gap-2 sm:justify-end">
-          <Button variant="ghost" onClick={dismissForSession}>Maybe later</Button>
+        <DialogFooter className="flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:justify-end sm:space-x-0">
+          <Button variant="ghost" size="sm" onClick={dismissForSession} className="w-full sm:w-auto">Maybe later</Button>
           {hasAccount ? (
             <>
-              <Button asChild variant="outline" onClick={() => setOpen(false)}>
+              <Button asChild variant="outline" size="sm" onClick={() => setOpen(false)} className="w-full sm:w-auto">
                 <Link to="/auth?mode=signup"><UserPlus className="h-4 w-4" /> Create new</Link>
               </Button>
-              <Button asChild variant="hero" onClick={() => setOpen(false)}>
+              <Button asChild variant="hero" size="sm" onClick={() => setOpen(false)} className="w-full sm:w-auto">
                 <Link to="/auth"><LogIn className="h-4 w-4" /> Sign in</Link>
               </Button>
             </>
           ) : (
             <>
-              <Button asChild variant="outline" onClick={() => setOpen(false)}>
+              <Button asChild variant="outline" size="sm" onClick={() => setOpen(false)} className="w-full sm:w-auto">
                 <Link to="/auth"><LogIn className="h-4 w-4" /> I have an account</Link>
               </Button>
-              <Button asChild variant="hero" onClick={() => setOpen(false)}>
+              <Button asChild variant="hero" size="sm" onClick={() => setOpen(false)} className="w-full sm:w-auto">
                 <Link to="/auth?mode=signup"><UserPlus className="h-4 w-4" /> Sign up free</Link>
               </Button>
             </>
