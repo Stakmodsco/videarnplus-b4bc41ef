@@ -26,26 +26,14 @@ export function BrandLogo({ className, size = 40, premium = true }: Props) {
       className={cn("shrink-0", className)}
     >
       <defs>
-        <linearGradient id={`${id}-bg`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="var(--primary)" />
-          <stop offset="100%" stopColor="var(--accent)" />
-        </linearGradient>
         <linearGradient id={`${id}-mark`} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="white" stopOpacity="0.95" />
           <stop offset="100%" stopColor="white" stopOpacity="0.78" />
         </linearGradient>
-        <linearGradient id={`${id}-sheen`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="white" stopOpacity="0.45" />
-          <stop offset="60%" stopColor="white" stopOpacity="0" />
-        </linearGradient>
-        <radialGradient id={`${id}-glow`} cx="50%" cy="0%" r="80%">
-          <stop offset="0%" stopColor="white" stopOpacity="0.35" />
-          <stop offset="100%" stopColor="white" stopOpacity="0" />
-        </radialGradient>
       </defs>
 
-      {/* tile */}
-      <rect x="2" y="2" width="60" height="60" rx="14" fill={`url(#${id}-bg)`} />
+      {/* tile — flat brand green, no gradient */}
+      <rect x="2" y="2" width="60" height="60" rx="14" fill="hsl(var(--primary))" />
       {premium && (
         <rect
           x="2.5"
