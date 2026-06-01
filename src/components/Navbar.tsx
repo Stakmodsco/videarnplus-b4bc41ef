@@ -4,7 +4,7 @@ import { useAuth, useIsAdmin } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { LogOut } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { Cheddar4uLogo } from "@/components/Cheddar4uLogo";
+import { BrandLogo } from "@/components/BrandLogo";
 
 export const Navbar = () => {
   const { user } = useAuth();
@@ -27,8 +27,8 @@ export const Navbar = () => {
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-background/60 border-b border-border/60">
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2.5">
-          <Cheddar4uLogo size={36} />
-          <span className="font-display text-xl font-semibold tracking-tight">Cheddar4u</span>
+          <BrandLogo size={36} />
+          <span className="font-display text-xl font-semibold tracking-tight">VidearnPlus</span>
         </Link>
         <nav className="flex items-center gap-2">
           {pathname === "/" && (

@@ -8,12 +8,12 @@ import { toast } from "sonner";
 
 type Msg = { from: "bot" | "user"; text: string; canEscalate?: boolean };
 
-const BOT_NAME = "Cheddar4u Support";
+const BOT_NAME = "VidearnPlus Support";
 
 const GREETING: Msg = {
   from: "bot",
   text:
-    "Hi 👋 I'm the Cheddar4u Support assistant. Ask me about withdrawals, " +
+    "Hi 👋 I'm the VidearnPlus Support assistant. Ask me about withdrawals, " +
     "upgrades, referrals, daily check-in, unlocks, account access, payments, " +
     "or anything else about the platform.",
 };

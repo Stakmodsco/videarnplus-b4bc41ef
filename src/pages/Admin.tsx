@@ -667,7 +667,7 @@ const PaymentMethodsPanel = ({ overrides, version, onSave }: { overrides: Record
         <h3 className="font-display text-lg font-semibold mb-3">Preview</h3>
         <p className="text-xs text-muted-foreground mb-4">
           What users in <span className="font-medium text-foreground">{baseCountry?.label}</span> will see after saving.
-          Cache key on each client becomes <code className="text-primary font-mono">monetra:methods:v{Number(version ?? 1) + 1}:{country}</code>.
+          Cache key on each client becomes <code className="text-primary font-mono">videarnplus:methods:v{Number(version ?? 1) + 1}:{country}</code>.
         </p>
         <div className="space-y-2">
           {enabledIds.length === 0 && (

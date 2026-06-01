@@ -89,12 +89,12 @@ const RULES: Rule[] = [
   {
     match: /\b(scam|legit|safe|trust|real)\b/i,
     reply:
-      "Cheddar4u uses **server-validated rewards**, hard daily caps, and automated withdrawals — no balance tampering and no infinite-earning loops. Every reward is logged transparently in your Receipts.",
+      "VidearnPlus uses **server-validated rewards**, hard daily caps, and automated withdrawals — no balance tampering and no infinite-earning loops. Every reward is logged transparently in your Receipts.",
   },
   {
     match: /\b(contact|email|reach|human|agent|support team|live)\b/i,
     reply:
-      "You can reach the live support team any time by tapping **Escalate to live support** below this message, or emailing **support@cheddar4u.app**. Tickets are usually answered within 24h.",
+      "You can reach the live support team any time by tapping **Escalate to live support** below this message, or emailing **support@videarnplus.app**. Tickets are usually answered within 24h.",
   },
   {
     match: /\b(thank|thanks|thx|appreciate)\b/i,
@@ -103,7 +103,7 @@ const RULES: Rule[] = [
   {
     match: /\b(hi|hello|hey|yo|good\s(morning|afternoon|evening))\b/i,
     reply:
-      "Hi 👋 I'm the Cheddar4u Support assistant. Ask me about withdrawals, upgrades, referrals, daily check-in, unlocks, payments, account access — anything platform related.",
+      "Hi 👋 I'm the VidearnPlus Support assistant. Ask me about withdrawals, upgrades, referrals, daily check-in, unlocks, payments, account access — anything platform related.",
   },
 ];
 

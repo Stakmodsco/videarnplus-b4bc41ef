@@ -19,7 +19,7 @@ const SIZE_MAP: Record<Size, { box: string; icon: string; radius: string }> = {
 };
 
 // Variant colours are driven by CSS tokens from index.css so light/dark themes
-// just work. These map to the Monetra indigo/violet palette.
+// just work. These map to the VidearnPlus indigo/violet palette.
 const VARIANT_MAP: Record<Variant, { bg: string; ring: string; iconCls: string }> = {
   primary: {
     bg: "from-primary/95 via-primary/80 to-primary-glow/70",

@@ -106,7 +106,7 @@ const DailyCheckin = () => {
             <h3 className="font-display text-xl font-semibold">How Daily Check-in Works</h3>
           </div>
           <p className="text-sm text-muted-foreground mb-5">
-            Daily check-in lets you earn small rewards simply by visiting Monetra each day.
+            Daily check-in lets you earn small rewards simply by visiting VidearnPlus each day.
             Build a consistent habit and watch your balance grow.
           </p>
           <ul className="space-y-2 text-sm">

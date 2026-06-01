@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 type Theme = "light" | "dark";
-const KEY = "monetra-theme";
+const KEY = "videarnplus-theme";
 
 function getInitial(): Theme {
   if (typeof window === "undefined") return "dark";
