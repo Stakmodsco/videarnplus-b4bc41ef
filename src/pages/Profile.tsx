@@ -45,7 +45,7 @@ const Profile = () => {
         <h1 className="font-display text-4xl font-semibold mb-8">Your account</h1>
 
         <Card className="glass-card p-8 rounded-xl text-center">
-          <div className="h-20 w-20 mx-auto rounded-full bg-gradient-emerald grid place-items-center text-primary-foreground font-display text-2xl font-semibold shadow-emerald">
+          <div className="h-20 w-20 mx-auto rounded-full bg-primary grid place-items-center text-primary-foreground font-display text-2xl font-semibold shadow-emerald">
             {initials}
           </div>
           <div className="font-display text-2xl font-semibold mt-4">{profile.full_name || "Member"}</div>

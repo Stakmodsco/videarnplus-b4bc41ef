@@ -274,7 +274,7 @@ const Activities = () => {
 
         {/* Refer & Earn banner */}
         <Link to="/referrals" className="block group">
-          <Card className="rounded-xl p-5 ring-1 ring-primary/30 bg-gradient-to-br from-primary/15 via-primary/5 to-transparent flex items-center gap-4">
+          <Card className="rounded-xl p-5 ring-1 ring-primary/30 bg-primary/10 flex items-center gap-4">
             <div className="h-12 w-12 rounded-xl bg-primary/20 border border-primary/30 grid place-items-center">
               <Users className="h-6 w-6 text-primary" />
             </div>

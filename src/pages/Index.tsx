@@ -68,7 +68,7 @@ const Index = () => {
           <div className="animate-fade-in">
             <h1 className="font-display text-5xl md:text-7xl font-semibold leading-[1.05] text-balance">
               Earn through structured
-              <span className="block bg-gradient-emerald bg-clip-text text-transparent"> digital activities.</span>
+              <span className="block text-primary"> digital activities.</span>
             </h1>
             <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl text-balance">
               VidearnPlus is a membership rewards platform with controlled payouts, daily caps, and automated withdrawals — designed to feel like a real fintech product, not a quick-money scheme.
@@ -117,7 +117,7 @@ const Index = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
           {tiers.map((t) => (
             <Card key={t.name} className={`glass-card p-7 rounded-xl flex flex-col relative ${t.popular ? "ring-1 ring-primary/40 emerald-glow" : ""}`}>
-              {t.popular && <div className="absolute -top-3 left-7 text-xs bg-gradient-emerald text-primary-foreground px-2.5 py-1 rounded-full font-medium">Most popular</div>}
+              {t.popular && <div className="absolute -top-3 left-7 text-xs bg-primary text-primary-foreground px-2.5 py-1 rounded-full font-medium">Most popular</div>}
               <div className="flex items-baseline justify-between mb-1">
                 <h3 className="font-display text-2xl font-semibold">{t.name}</h3>
                 <span className="text-xs text-muted-foreground">L{t.level}</span>

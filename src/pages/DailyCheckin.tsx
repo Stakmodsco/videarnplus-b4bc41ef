@@ -60,8 +60,8 @@ const DailyCheckin = () => {
   return (
     <div className="min-h-screen">
       <Navbar />
-      {/* Hero header — gradient banner like the reference */}
-      <div className="bg-gradient-to-r from-primary via-primary to-accent text-primary-foreground">
+      {/* Hero header — flat brand green */}
+      <div className="bg-primary text-primary-foreground">
         <div className="container py-10 max-w-3xl text-center">
           <h1 className="font-display text-3xl sm:text-4xl font-semibold">Daily Check-in</h1>
         </div>

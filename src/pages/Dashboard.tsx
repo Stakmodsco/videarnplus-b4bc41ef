@@ -118,7 +118,7 @@ const Dashboard = () => {
         </Card>
 
         {/* Balance hero */}
-        <Card className="rounded-xl p-6 mb-5 relative overflow-hidden bg-gradient-to-br from-primary via-primary/90 to-primary/70 text-primary-foreground shadow-emerald">
+        <Card className="rounded-xl p-6 mb-5 relative overflow-hidden bg-primary text-primary-foreground shadow-emerald">
           <div className="flex items-start justify-between">
             <div>
               <div className="text-xs uppercase tracking-widest opacity-80">Balance</div>
@@ -200,7 +200,7 @@ const Dashboard = () => {
 
         {/* Refer & Earn banner */}
         <Link to="/referrals" className="block group">
-          <Card className="rounded-xl p-5 ring-1 ring-primary/30 bg-gradient-to-br from-primary/15 via-primary/5 to-transparent flex items-center gap-4">
+          <Card className="rounded-xl p-5 ring-1 ring-primary/30 bg-primary/10 flex items-center gap-4">
             <div className="h-12 w-12 rounded-xl bg-primary/20 border border-primary/30 grid place-items-center">
               <Users className="h-6 w-6 text-primary" />
             </div>

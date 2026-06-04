@@ -165,14 +165,14 @@ export const SupportBot = () => {
       <button
         onClick={() => setOpen((o) => !o)}
         aria-label="Open support chat"
-        className="fixed bottom-24 right-5 sm:bottom-6 sm:right-6 z-40 h-14 w-14 rounded-full grid place-items-center shadow-xl bg-gradient-to-br from-primary to-accent text-primary-foreground hover:scale-105 transition-transform"
+        className="fixed bottom-24 right-5 sm:bottom-6 sm:right-6 z-40 h-14 w-14 rounded-full grid place-items-center shadow-xl bg-primary text-primary-foreground hover:scale-105 transition-transform"
       >
         {open ? <X className="h-5 w-5" /> : <MessageSquare className="h-5 w-5" />}
       </button>
 
       {open && (
         <div className="fixed bottom-44 right-5 sm:bottom-24 sm:right-6 z-40 w-[min(92vw,380px)] glass-card rounded-2xl border border-primary/30 overflow-hidden shadow-2xl flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-200">
-          <div className="bg-gradient-to-r from-primary to-accent text-primary-foreground p-4 flex items-center gap-3">
+          <div className="bg-primary text-primary-foreground p-4 flex items-center gap-3">
             <div className="h-9 w-9 rounded-full bg-background/20 grid place-items-center">
               <Bot className="h-4 w-4" />
             </div>
