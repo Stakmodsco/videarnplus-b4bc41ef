@@ -114,8 +114,8 @@ export const UpgradeNagModal = () => {
 
   return (
     <Dialog open={open} onOpenChange={(v) => (v ? setOpen(true) : dismiss())}>
-      <DialogContent className="glass-card border-primary/30 max-w-md p-0 overflow-hidden">
-        <div className="relative h-32 bg-gradient-emerald flex items-center justify-center overflow-hidden">
+      <DialogContent className="glass-card border-primary/30 sm:max-w-md w-[calc(100%-2rem)] max-w-[calc(100%-2rem)] p-0 overflow-hidden">
+        <div className="relative h-32 bg-primary flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0 mesh-bg opacity-60" />
           <div className="relative h-16 w-16 rounded-full bg-background/20 backdrop-blur-md grid place-items-center animate-pulse-ring">
             <Crown className="h-8 w-8 text-primary-foreground" />

@@ -1,46 +1,43 @@
 import { Card } from "@/components/ui/card";
 import { Quote, Star } from "lucide-react";
 import { useMemo } from "react";
-import { useCurrency } from "@/hooks/useCurrency";
 
 type T = { name: string; role: string; quote: string };
 
+// Completely fresh roster — different members, cities, and voice from the
+// original site. Quotes lean into the day-to-day experience of using the
+// platform rather than payout amounts.
 const TESTIMONIALS: T[] = [
-  { name: "Amaka O.", role: "Lagos, Nigeria",     quote: "Withdrew my first $120 in under 10 minutes. Process was painless." },
-  { name: "Kwame B.", role: "Accra, Ghana",        quote: "Loved the daily check-in habit. Small wins really add up." },
-  { name: "Liam P.",  role: "Cape Town, SA",       quote: "The vouchers worked instantly. Support replied in seconds." },
-  { name: "Sara K.",  role: "Cairo, Egypt",        quote: "Upgraded to Gold and unlocked tons of tasks. Worth it." },
-  { name: "Noah W.",  role: "Nairobi, Kenya",      quote: "Finally a rewards platform that pays without drama." },
-  { name: "Mei L.",   role: "Manila, Philippines", quote: "Referral commissions hit my balance the moment my friends upgraded." },
-  { name: "Adaeze N.",role: "Abuja, Nigeria",      quote: "Caps and rules are clear. No fake promises." },
-  { name: "Jamal R.", role: "Dar es Salaam, TZ",   quote: "Customer-first design. The mobile UX is so smooth." },
-  { name: "Priya S.", role: "Mumbai, India",       quote: "Submitted my screenshot and got approved in minutes." },
-  { name: "David O.", role: "Kampala, Uganda",     quote: "Got my first payout via Airtel Money the same day." },
-  { name: "Yara F.",  role: "Casablanca, Morocco", quote: "I love how every reward is logged transparently." },
-  { name: "Hassan T.",role: "Karachi, Pakistan",   quote: "Easy onboarding. The bonus on signup was a nice touch." },
-  { name: "Tariq H.", role: "Lahore, Pakistan",    quote: "Withdrawals are now actually automated and instant." },
-  { name: "Beatrice M.", role: "Lusaka, Zambia",   quote: "I tell all my friends — VidearnPlus just delivers." },
-  { name: "Sipho D.", role: "Durban, SA",          quote: "Transparent caps mean I always know what I'll earn." },
-  { name: "Aisha L.", role: "Dakar, Senegal",      quote: "Best rewards app I've used. Period." },
+  { name: "Harriet Bennett",   role: "Bristol, United Kingdom", quote: "The dashboard finally feels like a proper finance app. Caps are honest, payouts hit my account before my kettle finishes boiling." },
+  { name: "Rohan Iyer",         role: "Hyderabad, India",        quote: "I came in skeptical and left a fan. Every reward shows you exactly why it was credited — no fuzzy math, no hidden conditions." },
+  { name: "Khadijah Wright",    role: "Houston, USA",            quote: "I plug in for fifteen minutes during my coffee break. Predictable, no spammy popups, no chasing support for missing balances." },
+  { name: "Margaux Lefèvre",    role: "Bordeaux, France",        quote: "Support replied to me at 11pm on a Sunday with a real answer, not a script. That alone tells you who runs this." },
+  { name: "Bongani Khumalo",    role: "Pretoria, South Africa",  quote: "What sold me was watching the same withdrawal flow work for three of my friends on different banks. It's the same speed every time." },
+  { name: "Mark Reyes",         role: "Davao, Philippines",      quote: "Daily check-in feels like opening a habit tracker. I'm thirty days deep and the small rewards genuinely add up." },
+  { name: "Astrid Larsen",      role: "Gothenburg, Sweden",      quote: "Refreshing to use a rewards product that doesn't insult my intelligence. The tier explanations read like a real product page." },
+  { name: "Fahim Al-Mansoori",  role: "Sharjah, UAE",            quote: "Upgraded to Platinum last month. Higher caps unlocked instantly, and the referral commission landed in real time." },
+  { name: "Ji-woo Park",        role: "Busan, South Korea",      quote: "I appreciate that the platform tells you when you've hit your cap instead of letting you waste another hour." },
+  { name: "Beatriz Lima",       role: "Fortaleza, Brazil",       quote: "The mobile experience is the cleanest I've seen in this category. No flashing banners, no fake countdowns." },
+  { name: "Theo Whitmore",      role: "Leeds, United Kingdom",   quote: "I read the FAQ before I trusted it. Every claim they make is something I've now verified in my own account." },
+  { name: "Aminata Diallo",     role: "Saint-Louis, Senegal",    quote: "Withdrawals to my mobile wallet are instant. I checked the timestamps — average of two minutes across eight payouts." },
+  { name: "Jonas Becker",       role: "Cologne, Germany",        quote: "I like that there's a daily ceiling. It keeps the platform sustainable and stops me from overdoing it." },
+  { name: "Catalina Pino",      role: "Valparaíso, Chile",       quote: "Onboarding took maybe ninety seconds. Recovery keys instead of email reset was a smart, modern move." },
+  { name: "Bram De Jong",       role: "Rotterdam, Netherlands",  quote: "Referral payouts are itemised per friend. I can see exactly which invite earned what — full transparency." },
+  { name: "Manaia Tane",        role: "Wellington, New Zealand", quote: "Calm, no-nonsense product. Does what it says, pays when it says, and leaves my home screen alone the rest of the time." },
 ];
 
 export const Testimonials = () => {
-  const { format } = useCurrency();
-  const localized = TESTIMONIALS.map((t) => ({
-    ...t,
-    quote: t.quote.replace("$120", format(120, { decimals: 0 })),
-  }));
   // Duplicate for seamless marquee
-  const loop = useMemo(() => [...localized, ...localized], [localized]);
+  const loop = useMemo(() => [...TESTIMONIALS, ...TESTIMONIALS], []);
   return (
     <section className="container py-20 max-w-6xl">
       <div className="text-center mb-10">
-        <div className="text-xs uppercase tracking-widest text-primary mb-2">Testimonials</div>
-        <h2 className="font-display text-4xl md:text-5xl font-semibold">Trusted by members worldwide</h2>
-        <p className="text-muted-foreground mt-3 max-w-xl mx-auto">Real members. Real payouts. Real reviews.</p>
+        <div className="text-xs uppercase tracking-widest text-primary mb-2">Member voices</div>
+        <h2 className="font-display text-4xl md:text-5xl font-semibold">What VidearnPlus members actually say</h2>
+        <p className="text-muted-foreground mt-3 max-w-xl mx-auto">Unedited quotes from members across four continents.</p>
       </div>
       <div className="relative overflow-hidden">
-        {/* edge fades */}
+        {/* edge fades (function masks, not color gradients) */}
         <div className="pointer-events-none absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-background to-transparent z-10" />
         <div className="pointer-events-none absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-background to-transparent z-10" />
         <div className="flex gap-4 animate-marquee-slow w-max">

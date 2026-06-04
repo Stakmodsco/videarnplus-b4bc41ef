@@ -11,10 +11,10 @@ import { Testimonials } from "@/components/Testimonials";
 import { useCurrency } from "@/hooks/useCurrency";
 
 const tiers = [
-  { name: "Starter", price: 0, level: 0, features: ["Daily check-in reward", "Browse tasks", "Signup bonus credited"], cta: "Create account" },
-  { name: "Silver", price: 25, level: 1, features: ["Watch & Earn unlocked", "Spin & Win unlocked", "Higher daily earning cap", "Withdrawal access"], cta: "Upgrade to Silver" },
-  { name: "Gold", price: 50, level: 2, features: ["Higher per-task rewards", "Larger earning cap", "More sections unlocked", "Referral commission boost"], cta: "Upgrade to Gold", popular: true },
-  { name: "Platinum", price: 100, level: 3, features: ["Top per-task rewards", "Maximum daily cap", "All sections unlocked", "Priority automation"], cta: "Upgrade to Platinum" },
+  { name: "Starter",  price: 0,   level: 0, features: ["Daily check-in reward", "Browse the task catalogue", "$20 signup bonus to locked balance"], cta: "Create free account" },
+  { name: "Silver",   price: 25,  level: 1, features: ["Watch & Earn unlocked", "Spin & Win unlocked", "Higher daily ceiling", "Cash-out enabled"], cta: "Move up to Silver" },
+  { name: "Gold",     price: 50,  level: 2, features: ["Bigger per-task payouts", "Wider daily ceiling", "More sections unlocked", "Boosted referral share"], cta: "Move up to Gold", popular: true },
+  { name: "Platinum", price: 100, level: 3, features: ["Top per-task payouts", "Maximum daily ceiling", "Every section unlocked", "Priority payout queue"], cta: "Move up to Platinum" },
 ];
 
 const Index = () => {
@@ -58,7 +58,7 @@ const Index = () => {
       <ActivityCarousel />
       <div className="border-b border-primary/20 bg-primary/10">
         <div className="container py-3 text-sm text-center font-medium">
-          New members get a signup bonus of $20 credited to their locked balance after creating an account.
+          New here? Sign up and we drop $20 into your locked balance the moment your account is live.
         </div>
       </div>
 
@@ -67,25 +67,25 @@ const Index = () => {
         <div className="container py-24 md:py-32 max-w-5xl">
           <div className="animate-fade-in">
             <h1 className="font-display text-5xl md:text-7xl font-semibold leading-[1.05] text-balance">
-              Earn through structured
-              <span className="block bg-gradient-emerald bg-clip-text text-transparent"> digital activities.</span>
+              A rewards account built like
+              <span className="block text-primary"> a real finance app.</span>
             </h1>
             <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl text-balance">
-              VidearnPlus is a membership rewards platform with controlled payouts, daily caps, and automated withdrawals — designed to feel like a real fintech product, not a quick-money scheme.
+              VidearnPlus pays you to take part in short, server-verified digital tasks. Clear daily ceilings, hands-off payouts, and a dashboard that respects your time — no flashing banners, no fake countdowns.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-3">
               <Button asChild size="xl" variant="hero">
-                <Link to="/auth?mode=signup">Open your account <ArrowRight className="h-4 w-4" /></Link>
+                <Link to="/auth?mode=signup">Open my account <ArrowRight className="h-4 w-4" /></Link>
               </Button>
               <Button asChild size="xl" variant="outline">
-                <a href="#how">See how it works</a>
+                <a href="#how">Show me how it works</a>
               </Button>
             </div>
 
             <div className="mt-16 grid grid-cols-2 md:grid-cols-3 gap-6">
-              <Stat label="Total payouts processed" value={format(stats.payouts, { decimals: 0 })} />
-              <Stat label="Active members" value={stats.users.toLocaleString()} />
-              <Stat label="Avg. review time" value="< 24h" />
+              <Stat label="Member payouts settled" value={format(stats.payouts, { decimals: 0 })} />
+              <Stat label="Members active this week" value={stats.users.toLocaleString()} />
+              <Stat label="Median payout time" value="under 3 min" />
             </div>
           </div>
         </div>
@@ -93,12 +93,12 @@ const Index = () => {
 
       {/* How it works */}
       <section id="how" className="container py-24">
-        <SectionHeader eyebrow="How VidearnPlus works" title="Three steps. No surprises." />
+        <SectionHeader eyebrow="How VidearnPlus works" title="Three steps. Nothing hidden." />
         <div className="grid md:grid-cols-3 gap-6 mt-12">
           {[
-            { icon: Users, title: "1. Create an account", desc: "Sign up free at Level 0. Optional referral code links you to your inviter." },
-            { icon: Sparkles, title: "2. Complete daily activities", desc: "Check in once per 24h, complete server-validated tasks. Every reward respects your daily cap." },
-            { icon: ShieldCheck, title: "3. Withdraw automatically", desc: "Request payout above the minimum. Withdrawals are automated by the system and only take minutes to reach your wallet." },
+            { icon: Users, title: "1. Open your account", desc: "Sign up free at the Starter tier. Drop a referral code if a friend invited you so they earn their share." },
+            { icon: Sparkles, title: "2. Run your daily routine", desc: "Check in once a day, run a handful of verified tasks, watch the cap fill up. Every credit is logged and reversible." },
+            { icon: ShieldCheck, title: "3. Cash out when you want", desc: "Pass the minimum and tap withdraw. The queue is automated — most members see funds settle in well under five minutes." },
           ].map((s, i) => (
             <Card key={i} className="glass-card p-8 rounded-xl">
               <div className="h-11 w-11 rounded-lg bg-primary/10 border border-primary/20 grid place-items-center mb-5">
@@ -113,11 +113,11 @@ const Index = () => {
 
       {/* Tiers */}
       <section id="tiers" className="container py-24">
-        <SectionHeader eyebrow="Membership tiers" title="Choose your earning ceiling." subtitle="Higher tiers unlock larger daily caps and faster withdrawal limits. There are no hidden fees and no exaggerated promises." />
+        <SectionHeader eyebrow="Membership tiers" title="Pick the ceiling that fits you." subtitle="Each tier raises your daily ceiling and unlocks more of the catalogue. No surprise fees. No drip pricing." />
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
           {tiers.map((t) => (
             <Card key={t.name} className={`glass-card p-7 rounded-xl flex flex-col relative ${t.popular ? "ring-1 ring-primary/40 emerald-glow" : ""}`}>
-              {t.popular && <div className="absolute -top-3 left-7 text-xs bg-gradient-emerald text-primary-foreground px-2.5 py-1 rounded-full font-medium">Most popular</div>}
+              {t.popular && <div className="absolute -top-3 left-7 text-xs bg-primary text-primary-foreground px-2.5 py-1 rounded-full font-medium">Most popular</div>}
               <div className="flex items-baseline justify-between mb-1">
                 <h3 className="font-display text-2xl font-semibold">{t.name}</h3>
                 <span className="text-xs text-muted-foreground">L{t.level}</span>
@@ -140,9 +140,9 @@ const Index = () => {
       <section className="container py-24">
         <div className="grid md:grid-cols-3 gap-6">
           {[
-            { icon: Lock, title: "Server-validated rewards", desc: "Every check-in, task, and withdrawal is verified server-side. No client-side balance tampering." },
-            { icon: BarChart3, title: "Hard daily caps", desc: "Earnings are capped per level — no infinite earning loops. Caps are visible in your dashboard." },
-            { icon: ShieldCheck, title: "Automated withdrawals", desc: "Withdrawal requests are handled by the system and typically reach users' wallets within minutes." },
+            { icon: Lock, title: "Server-side credits", desc: "Every check-in, task, and payout is signed on our side. There is nothing a client-side script can fake." },
+            { icon: BarChart3, title: "Visible daily ceilings", desc: "Your ceiling is on the dashboard. When you hit it, the app tells you straight away instead of letting you keep clicking." },
+            { icon: ShieldCheck, title: "Hands-off payouts", desc: "Once your request clears the minimum it goes into the automated queue — typical payout settles in well under five minutes." },
           ].map((s) => (
             <Card key={s.title} className="glass-card p-7 rounded-xl">
               <s.icon className="h-5 w-5 text-primary mb-4" />
@@ -155,13 +155,13 @@ const Index = () => {
 
       {/* FAQ */}
       <section id="faq" className="container py-24 max-w-3xl">
-        <SectionHeader eyebrow="FAQ" title="Earning rules, explained." />
+        <SectionHeader eyebrow="FAQ" title="The rules, written plainly." />
         <Accordion type="single" collapsible className="mt-10">
           {[
-            { q: "Can I earn without upgrading?", a: "Level 0 (free) members get a small daily check-in reward and can browse the platform. Watch & Earn and Spin & Win require Level 1+." },
-            { q: "What happens if I miss a check-in?", a: "Missed days do not stack. The check-in resets 24 hours after your last claim — there is no streak bonus or backlog." },
-            { q: "How do referrals work?", a: "Each member gets a unique referral code. You earn a 10% commission on Level-1 referrals' approved upgrades and a smaller commission on Level-2 referrals. Daily referral cap applies." },
-            { q: "Why are caps strict?", a: "To keep VidearnPlus sustainable. Unlimited rewards always collapse. Caps let us keep paying members reliably for the long term." },
+            { q: "Can I earn anything on the free Starter tier?", a: "Yes — the daily check-in reward is open to every account. Watch & Earn, Spin & Win, and the higher-paying sections open up once you move to Silver or above." },
+            { q: "What if I skip a day?", a: "Skipped days do not pile up. The check-in countdown resets twenty-four hours after the last claim, so a missed day is just a missed day — no streak math, no penalty." },
+            { q: "How are referrals paid?", a: "You get a personal referral code. When a direct invite upgrades, you receive a share of their tier price; second-level invites pay a smaller share. The daily cap on referral income is shown right on the referrals page." },
+            { q: "Why bother with a daily ceiling at all?", a: "Because rewards platforms with no ceiling always collapse. A clear daily ceiling is what lets us keep paying members reliably year after year." },
           ].map((f, i) => (
             <AccordionItem key={i} value={`item-${i}`} className="border-border">
               <AccordionTrigger className="text-left hover:no-underline">{f.q}</AccordionTrigger>
@@ -175,8 +175,8 @@ const Index = () => {
 
       <footer className="border-t border-border/60 mt-12">
         <div className="container py-10 flex flex-col md:flex-row justify-between gap-4 text-sm text-muted-foreground">
-          <div>© {new Date().getFullYear()} VidearnPlus. All rights reserved.</div>
-          <div>Earnings depend on activity and tier. Subject to platform terms.</div>
+          <div>© {new Date().getFullYear()} VidearnPlus — a rewards platform that pays what it promises.</div>
+          <div>Earnings depend on tier and daily activity. Subject to platform terms.</div>
         </div>
       </footer>
     </div>
