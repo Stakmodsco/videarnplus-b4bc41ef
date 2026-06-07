@@ -8,6 +8,21 @@
     <link rel="canonical" href="/" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
+
+    <!-- Premium font loading: preconnect + non-blocking swap so text paints immediately -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@500;600;700&family=Jost:wght@400;500;600&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@500;600;700&family=Jost:wght@400;500;600&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
     <meta property="og:title" content="VidearnPlus — Earn through structured digital activities" />
     <meta property="og:description" content="Get a $20 signup bonus. Automated withdrawals in minutes. Transparent earning rules." />
     <meta property="og:type" content="website" />

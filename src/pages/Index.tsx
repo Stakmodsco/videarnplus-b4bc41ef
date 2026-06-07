@@ -53,27 +53,24 @@ const Index = () => {
 
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pb-24 md:pb-0">
       <Navbar />
-      <ActivityCarousel />
-      <div className="border-b border-primary/20 bg-primary/10">
-        <div className="container py-3 text-sm text-center font-medium">
-          New here? Sign up and we drop $20 into your locked balance the moment your account is live.
-        </div>
-      </div>
 
-      {/* Hero */}
+      {/* 1. Hero first — fastest path to value */}
       <section className="relative overflow-hidden">
-        <div className="container py-24 md:py-32 max-w-5xl">
+        <div className="container py-20 md:py-32 max-w-5xl">
           <div className="animate-fade-in">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-medium mb-6">
+              <Sparkles className="h-3.5 w-3.5" /> $20 signup bonus · no card required
+            </div>
             <h1 className="font-display text-5xl md:text-7xl font-semibold leading-[1.05] text-balance">
               A rewards account built like
               <span className="block text-primary"> a real finance app.</span>
             </h1>
             <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl text-balance">
-              VidearnPlus pays you to take part in short, server-verified digital tasks. Clear daily ceilings, hands-off payouts, and a dashboard that respects your time — no flashing banners, no fake countdowns.
+              VidearnPlus pays you to take part in short, server-verified digital tasks. Clear daily ceilings, hands-off payouts, and a dashboard that respects your time.
             </p>
-            <div className="mt-10 flex flex-col sm:flex-row gap-3">
+            <div className="mt-8 flex flex-col sm:flex-row gap-3">
               <Button asChild size="xl" variant="hero">
                 <Link to="/auth?mode=signup">Open my account <ArrowRight className="h-4 w-4" /></Link>
               </Button>
@@ -81,24 +78,48 @@ const Index = () => {
                 <a href="#how">Show me how it works</a>
               </Button>
             </div>
-
-            <div className="mt-16 grid grid-cols-2 md:grid-cols-3 gap-6">
-              <Stat label="Member payouts settled" value={format(stats.payouts, { decimals: 0 })} />
-              <Stat label="Members active this week" value={stats.users.toLocaleString()} />
-              <Stat label="Median payout time" value="under 3 min" />
-            </div>
           </div>
         </div>
       </section>
 
-      {/* How it works */}
-      <section id="how" className="container py-24">
+      {/* 2. Live activity proof — directly under hero where it converts */}
+      <ActivityCarousel />
+
+      {/* 3. Live stats band */}
+      <section className="container py-12">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+          <Stat label="Member payouts settled" value={format(stats.payouts, { decimals: 0 })} />
+          <Stat label="Members active this week" value={stats.users.toLocaleString()} />
+          <Stat label="Median payout time" value="under 3 min" />
+        </div>
+      </section>
+
+      {/* 4. Trust pillars — earn confidence before the price page */}
+      <section className="container py-20">
+        <SectionHeader eyebrow="Built to be trusted" title="Why members stay." />
+        <div className="grid md:grid-cols-3 gap-6 mt-10">
+          {[
+            { icon: Lock, title: "Server-side credits", desc: "Every check-in, task, and payout is signed on our side. There is nothing a client-side script can fake." },
+            { icon: BarChart3, title: "Visible daily ceilings", desc: "Your ceiling is on the dashboard. When you hit it, the app tells you straight away instead of letting you keep clicking." },
+            { icon: ShieldCheck, title: "Hands-off payouts", desc: "Once your request clears the minimum it goes into the automated queue — typical payout settles in under five minutes." },
+          ].map((s) => (
+            <Card key={s.title} className="glass-card p-7 rounded-xl">
+              <s.icon className="h-5 w-5 text-primary mb-4" />
+              <h3 className="font-semibold mb-2">{s.title}</h3>
+              <p className="text-muted-foreground text-sm leading-relaxed">{s.desc}</p>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* 5. How it works */}
+      <section id="how" className="container py-20 bg-muted/30 rounded-3xl">
         <SectionHeader eyebrow="How VidearnPlus works" title="Three steps. Nothing hidden." />
         <div className="grid md:grid-cols-3 gap-6 mt-12">
           {[
             { icon: Users, title: "1. Open your account", desc: "Sign up free at the Starter tier. Drop a referral code if a friend invited you so they earn their share." },
             { icon: Sparkles, title: "2. Run your daily routine", desc: "Check in once a day, run a handful of verified tasks, watch the cap fill up. Every credit is logged and reversible." },
-            { icon: ShieldCheck, title: "3. Cash out when you want", desc: "Pass the minimum and tap withdraw. The queue is automated — most members see funds settle in well under five minutes." },
+            { icon: ShieldCheck, title: "3. Cash out when you want", desc: "Pass the minimum and tap withdraw. The queue is automated — most members see funds settle in under five minutes." },
           ].map((s, i) => (
             <Card key={i} className="glass-card p-8 rounded-xl">
               <div className="h-11 w-11 rounded-lg bg-primary/10 border border-primary/20 grid place-items-center mb-5">
@@ -111,8 +132,11 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Tiers */}
-      <section id="tiers" className="container py-24">
+      {/* 6. Testimonials — social proof before pricing */}
+      <Testimonials />
+
+      {/* 7. Tiers / Pricing */}
+      <section id="tiers" className="container py-20">
         <SectionHeader eyebrow="Membership tiers" title="Pick the ceiling that fits you." subtitle="Each tier raises your daily ceiling and unlocks more of the catalogue. No surprise fees. No drip pricing." />
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
           {tiers.map((t) => (
@@ -136,25 +160,8 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Trust */}
-      <section className="container py-24">
-        <div className="grid md:grid-cols-3 gap-6">
-          {[
-            { icon: Lock, title: "Server-side credits", desc: "Every check-in, task, and payout is signed on our side. There is nothing a client-side script can fake." },
-            { icon: BarChart3, title: "Visible daily ceilings", desc: "Your ceiling is on the dashboard. When you hit it, the app tells you straight away instead of letting you keep clicking." },
-            { icon: ShieldCheck, title: "Hands-off payouts", desc: "Once your request clears the minimum it goes into the automated queue — typical payout settles in well under five minutes." },
-          ].map((s) => (
-            <Card key={s.title} className="glass-card p-7 rounded-xl">
-              <s.icon className="h-5 w-5 text-primary mb-4" />
-              <h3 className="font-semibold mb-2">{s.title}</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">{s.desc}</p>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="container py-24 max-w-3xl">
+      {/* 8. FAQ */}
+      <section id="faq" className="container py-20 max-w-3xl">
         <SectionHeader eyebrow="FAQ" title="The rules, written plainly." />
         <Accordion type="single" collapsible className="mt-10">
           {[
@@ -171,14 +178,30 @@ const Index = () => {
         </Accordion>
       </section>
 
-      <Testimonials />
+      {/* 9. Closing CTA band */}
+      <section className="container py-20">
+        <Card className="rounded-2xl p-10 md:p-14 bg-primary text-primary-foreground text-center">
+          <h2 className="font-display text-3xl md:text-5xl font-semibold mb-4 text-balance">Your $20 bonus is one tap away.</h2>
+          <p className="opacity-90 mb-8 max-w-xl mx-auto">Open a free Starter account, claim the bonus, and run your first task in under two minutes.</p>
+          <Button asChild size="xl" variant="secondary">
+            <Link to="/auth?mode=signup">Create my account <ArrowRight className="h-4 w-4" /></Link>
+          </Button>
+        </Card>
+      </section>
 
-      <footer className="border-t border-border/60 mt-12">
+      <footer className="border-t border-border/60">
         <div className="container py-10 flex flex-col md:flex-row justify-between gap-4 text-sm text-muted-foreground">
           <div>© {new Date().getFullYear()} VidearnPlus — a rewards platform that pays what it promises.</div>
           <div>Earnings depend on tier and daily activity. Subject to platform terms.</div>
         </div>
       </footer>
+
+      {/* Mobile sticky CTA */}
+      <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-background/95 backdrop-blur border-t border-border p-3">
+        <Button asChild size="lg" variant="hero" className="w-full">
+          <Link to="/auth?mode=signup">Claim your $20 bonus <ArrowRight className="h-4 w-4" /></Link>
+        </Button>
+      </div>
     </div>
   );
 };
