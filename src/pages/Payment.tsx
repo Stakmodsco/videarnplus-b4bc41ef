@@ -19,7 +19,7 @@ import { COUNTRIES, USDT_TRC20_METHOD_ID, type MethodDef, type FieldDef } from "
 import { ALL_COUNTRIES, scopeForCountry } from "@/lib/countries";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import usdtQrImage from "@/assets/usdt-trc20-qr.jpg";
+
 
 type StructuredInstr = {
   amount_label?: string;
