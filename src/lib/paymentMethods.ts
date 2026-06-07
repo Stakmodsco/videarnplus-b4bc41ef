@@ -48,16 +48,18 @@ export type CountryDef = {
 
 const COMMON_PROOF = "Upload a clear screenshot of your payment receipt showing the date, amount and reference.";
 
-// Shared USDT TRC20 crypto method — available in EVERY country as a universal fallback.
-export const USDT_TRC20_ADDRESS = "TXZXW7dEpLYhUDwjuhdPVrpj2Fe4eatZZX";
+// Shared crypto methods — available in EVERY country as universal fallbacks.
+export const USDT_TRC20_ADDRESS = "TDv4v3igstxqqKokcx5aJfqTErhjFovjBW";
 export const USDT_TRC20_METHOD_ID = "usdt_trc20";
+export const BTC_ADDRESS = "bc1q2j424x7nve83nmrw3q0knlqm5utfxflt6r23wz";
+export const BTC_METHOD_ID = "btc";
 
 const cryptoMethod: MethodDef = {
   id: USDT_TRC20_METHOD_ID,
   label: "Crypto (USDT • TRC20)",
   icon: "Bitcoin",
   description:
-    "Send USDT on the Tron (TRC20) network to the wallet below. Scan the QR code with your wallet app or copy the address. Always double-check the network is TRC20 — funds sent on other networks will be lost.",
+    "Send USDT on the Tron (TRC20) network to the wallet below. Always double-check the network is TRC20 — funds sent on other networks will be lost.",
   proofHint: "Upload a screenshot of the on-chain transaction (TXID and amount visible).",
   instructions: {
     network: "Tron (TRC20)",
@@ -73,6 +75,32 @@ const cryptoMethod: MethodDef = {
       pattern: "^[A-Za-z0-9]{40,80}$",
       patternMessage: "Paste the full TRC20 transaction hash (40–80 characters).",
       minLength: 40,
+      maxLength: 80,
+    },
+  ],
+};
+
+const btcMethod: MethodDef = {
+  id: BTC_METHOD_ID,
+  label: "Crypto (Bitcoin • BTC)",
+  icon: "Bitcoin",
+  description:
+    "Send Bitcoin (BTC) on the Bitcoin mainnet to the wallet below. Only send BTC on the Bitcoin network — coins sent on other networks will be lost.",
+  proofHint: "Upload a screenshot of the on-chain transaction (TXID and amount visible).",
+  instructions: {
+    network: "Bitcoin (BTC)",
+    address: BTC_ADDRESS,
+    notes: "Bitcoin mainnet only. Lightning or wrapped-BTC networks are NOT supported.",
+  },
+  fields: [
+    {
+      key: "transaction_id",
+      label: "Transaction Hash (TXID)",
+      placeholder: "e.g. 4a5f9c…",
+      required: true,
+      pattern: "^[A-Za-z0-9]{6,80}$",
+      patternMessage: "Paste the full BTC transaction hash.",
+      minLength: 6,
       maxLength: 80,
     },
   ],
