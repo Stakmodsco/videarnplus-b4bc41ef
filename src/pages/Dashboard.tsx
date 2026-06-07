@@ -78,7 +78,7 @@ const Dashboard = () => {
 
   if (loading) return null;
   if (!user) return <Navigate to="/auth" replace />;
-  if (!profile) return <div className="min-h-screen"><Navbar /><div className="container py-20 text-center text-muted-foreground">Loading…</div><BottomNav /></div>;
+  if (!profile) return <DashboardSkeleton />;
 
   const lvl = String(profile.level);
   const cap = Number(settings?.daily_earning_caps?.[lvl] ?? 0);
