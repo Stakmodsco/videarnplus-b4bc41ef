@@ -231,4 +231,29 @@ const MiniStat = ({ icon: Icon, label, value, mono, className = "" }: any) => (
   </Card>
 );
 
+const DashboardSkeleton = () => (
+  <div className="min-h-screen">
+    <Navbar />
+    <div className="container py-8 max-w-5xl space-y-5 animate-pulse">
+      <div className="h-20 rounded-xl bg-muted/60" />
+      <div className="h-48 rounded-xl bg-primary/30" />
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="h-20 rounded-xl bg-muted/60" />
+        ))}
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="h-20 rounded-xl bg-muted/60" />
+        <div className="h-20 rounded-xl bg-muted/60" />
+      </div>
+      <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="h-24 rounded-xl bg-muted/60" />
+        ))}
+      </div>
+    </div>
+    <BottomNav />
+  </div>
+);
+
 export default Dashboard;
