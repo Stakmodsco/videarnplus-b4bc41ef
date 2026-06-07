@@ -78,10 +78,10 @@ const Dashboard = () => {
 
   if (loading) return null;
   if (!user) return <Navigate to="/auth" replace />;
-  if (!profile || !settings) return <div className="min-h-screen"><Navbar /><div className="container py-20 text-center text-muted-foreground">Loading…</div><BottomNav /></div>;
+  if (!profile) return <div className="min-h-screen"><Navbar /><div className="container py-20 text-center text-muted-foreground">Loading…</div><BottomNav /></div>;
 
   const lvl = String(profile.level);
-  const cap = Number(settings.daily_earning_caps?.[lvl] ?? 0);
+  const cap = Number(settings?.daily_earning_caps?.[lvl] ?? 0);
   const today = new Date().toISOString().slice(0, 10);
   const earnedToday = profile.daily_earned_date === today ? Number(profile.daily_earned) : 0;
   const capPct = cap > 0 ? Math.min(100, (earnedToday / cap) * 100) : 0;
@@ -122,7 +122,7 @@ const Dashboard = () => {
           <div className="flex items-start justify-between">
             <div>
               <div className="text-xs uppercase tracking-widest opacity-80">Balance</div>
-              <div className="font-display text-5xl font-semibold mt-2 tabular-nums">
+              <div className="font-display text-3xl sm:text-5xl font-semibold mt-2 tabular-nums break-all">
                 {showBalance ? format(profile.balance) : `${meta.symbol} • • • •`}
               </div>
             </div>

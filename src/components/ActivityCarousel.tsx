@@ -139,7 +139,7 @@ export const ActivityCarousel = () => {
 
   return (
     <div className="w-full bg-primary/10 border-y border-primary/20 overflow-hidden relative">
-      <div className="flex animate-marquee whitespace-nowrap py-2.5 [animation-duration:18s] md:[animation-duration:38s]">
+      <div className="flex animate-marquee whitespace-nowrap py-2.5 [animation-duration:10s] md:[animation-duration:22s]">
         {loop.map((it, i) => {
           const meta = currencyForCountry(it.country);
           return (
