@@ -122,7 +122,7 @@ const Dashboard = () => {
           <div className="flex items-start justify-between">
             <div>
               <div className="text-xs uppercase tracking-widest opacity-80">Balance</div>
-              <div className="font-display text-5xl font-semibold mt-2 tabular-nums">
+              <div className="font-display text-3xl sm:text-5xl font-semibold mt-2 tabular-nums break-all">
                 {showBalance ? format(profile.balance) : `${meta.symbol} • • • •`}
               </div>
             </div>
