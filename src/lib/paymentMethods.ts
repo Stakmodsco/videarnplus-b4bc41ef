@@ -112,7 +112,7 @@ export const COUNTRIES: CountryDef[] = [
     id: "INT",
     label: "International",
     flag: "🌍",
-    methods: [cryptoMethod],
+    methods: [cryptoMethod, btcMethod],
   },
 
   // ─── South Africa ─────────────────────────────────────────────────────────
@@ -136,6 +136,7 @@ export const COUNTRIES: CountryDef[] = [
         ],
       },
       cryptoMethod,
+      btcMethod,
     ],
   },
 
@@ -171,6 +172,7 @@ export const COUNTRIES: CountryDef[] = [
         ],
       },
       cryptoMethod,
+      btcMethod,
     ],
   },
 
@@ -203,6 +205,7 @@ export const COUNTRIES: CountryDef[] = [
         ],
       },
       cryptoMethod,
+      btcMethod,
     ],
   },
 
@@ -227,6 +230,7 @@ export const COUNTRIES: CountryDef[] = [
         ],
       },
       cryptoMethod,
+      btcMethod,
     ],
   },
 
@@ -251,6 +255,7 @@ export const COUNTRIES: CountryDef[] = [
         ],
       },
       cryptoMethod,
+      btcMethod,
     ],
   },
 
@@ -277,6 +282,7 @@ export const COUNTRIES: CountryDef[] = [
         ],
       },
       cryptoMethod,
+      btcMethod,
     ],
   },
 
@@ -285,7 +291,7 @@ export const COUNTRIES: CountryDef[] = [
     id: "COMING_SOON",
     label: "Crypto (Worldwide)",
     flag: "🌍",
-    methods: [cryptoMethod],
+    methods: [cryptoMethod, btcMethod],
   },
 ];
 
