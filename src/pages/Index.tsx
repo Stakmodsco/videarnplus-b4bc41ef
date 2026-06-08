@@ -60,8 +60,14 @@ const Index = () => {
       <section className="relative overflow-hidden">
         <div className="container py-20 md:py-32 max-w-5xl">
           <div className="animate-fade-in">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-medium mb-6">
-              <Sparkles className="h-3.5 w-3.5" /> $20 signup bonus · no card required
+            <div className="inline-flex items-center gap-3 pl-2 pr-4 py-2 mb-6 rounded-2xl bg-card border border-primary/30 shadow-soft">
+              <span className="h-9 w-9 rounded-xl bg-primary/10 border border-primary/30 grid place-items-center text-xl leading-none" aria-hidden>
+                🎁
+              </span>
+              <div className="flex flex-col leading-tight">
+                <span className="text-primary text-sm font-semibold">$20 signup bonus</span>
+                <span className="text-[11px] text-muted-foreground">No card required · credited instantly</span>
+              </div>
             </div>
             <h1 className="font-display text-5xl md:text-7xl font-semibold leading-[1.05] text-balance">
               A rewards account built like
