@@ -143,14 +143,14 @@ export const ActivityCarousel = () => {
       style={{ contain: "content" }}
     >
       <div
-        className="flex animate-marquee whitespace-nowrap py-2.5 [animation-duration:14s] md:[animation-duration:22s] will-change-transform"
+        className="flex w-max animate-marquee whitespace-nowrap py-2.5 [animation-duration:14s] md:[animation-duration:22s] will-change-transform"
         style={{ transform: "translateZ(0)", backfaceVisibility: "hidden" }}
       >
         {loop.map((it, i) => {
           const meta = currencyForCountry(it.country);
           const Icon = it.kind === "withdrawal" ? Banknote : ArrowUpRight;
           return (
-            <div key={`${it.name}-${i}`} className="flex items-center gap-2 mx-5 text-sm">
+            <div key={`${it.name}-${i}`} className="flex items-center gap-2 mx-5 text-sm shrink-0">
               <Icon className="h-4 w-4 text-primary shrink-0" />
               <span className="font-medium">{it.name}</span>
               <span className="text-muted-foreground">
