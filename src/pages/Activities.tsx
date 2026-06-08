@@ -68,13 +68,15 @@ const Activities = () => {
     let cancelled = false;
     setLoadError(null);
     setTimedOut(false);
-    withTimeout(supabase.from("app_settings").select("*").then(({ data, error }) => {
-      if (error) throw error;
-      const m: any = {};
-      data?.forEach((r: any) => (m[r.key] = r.value));
-      if (!cancelled) setSettings(m as Settings);
-    }))
-      .catch((e) => { if (!cancelled) setLoadError(e?.message ?? "Failed to load settings"); });
+    withTimeout(
+      (async () => {
+        const { data, error } = await supabase.from("app_settings").select("*");
+        if (error) throw error;
+        const m: any = {};
+        data?.forEach((r: any) => (m[r.key] = r.value));
+        if (!cancelled) setSettings(m as Settings);
+      })()
+    ).catch((e) => { if (!cancelled) setLoadError(e?.message ?? "Failed to load settings"); });
     return () => { cancelled = true; };
   }, [reloadKey]);
 
