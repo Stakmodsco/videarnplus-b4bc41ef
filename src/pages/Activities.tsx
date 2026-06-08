@@ -84,12 +84,14 @@ const Activities = () => {
     if (!user) return;
     try {
       const start = new Date(); start.setUTCHours(0, 0, 0, 0);
-      const [{ data: logs }, { data: ul }, { data: cat }, { data: comp }] = await withTimeout(Promise.all([
-        supabase.from("tasks_log").select("task_type").eq("user_id", user.id).gte("completed_at", start.toISOString()),
-        supabase.from("tile_unlocks").select("tile_id").eq("user_id", user.id),
-        supabase.from("task_catalog").select("*").eq("active", true).order("sort_order"),
-        supabase.from("task_completions").select("catalog_id").eq("user_id", user.id),
-      ]));
+      const [{ data: logs }, { data: ul }, { data: cat }, { data: comp }] = await withTimeout(
+        (async () => Promise.all([
+          supabase.from("tasks_log").select("task_type").eq("user_id", user.id).gte("completed_at", start.toISOString()),
+          supabase.from("tile_unlocks").select("tile_id").eq("user_id", user.id),
+          supabase.from("task_catalog").select("*").eq("active", true).order("sort_order"),
+          supabase.from("task_completions").select("catalog_id").eq("user_id", user.id),
+        ]))()
+      );
       const counts: Record<string, number> = {};
       (logs ?? []).forEach((r: any) => { counts[r.task_type] = (counts[r.task_type] ?? 0) + 1; });
       setTaskCounts(counts);
