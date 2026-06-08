@@ -235,17 +235,17 @@ const Activities = () => {
   const nextTask = catalog.find((c) => !completions.has(c.id) && profile.level >= (c.min_level ?? 1));
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-dvh">
       <Navbar />
-      <div className="container py-10 max-w-5xl">
+      <div className="container py-8 sm:py-10 max-w-5xl">
         <BackButton />
         <div className="text-xs uppercase tracking-widest text-primary mb-2">Activities</div>
-        <h1 className="font-display text-4xl font-semibold mb-2">Ways to earn</h1>
-        <p className="text-muted-foreground mb-8">
+        <h1 className="font-display text-3xl sm:text-4xl font-semibold mb-2">Ways to earn</h1>
+        <p className="text-muted-foreground mb-6 sm:mb-8 text-sm sm:text-base">
           Complete activities to earn rewards. Unlock more tasks by upgrading or topping up.
         </p>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-6">
           {tiles.map((t) => {
             const tierLocked = profile.level < t.unlockLevel;
             const premiumLocked = !!t.premium && !isPremiumUnlocked(t.id);
