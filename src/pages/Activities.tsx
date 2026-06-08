@@ -52,39 +52,103 @@ const Activities = () => {
   const [busy, setBusy] = useState<string | null>(null);
   const [catalog, setCatalog] = useState<any[]>([]);
   const [completions, setCompletions] = useState<Set<string>>(new Set());
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [timedOut, setTimedOut] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
   const navigate = useNavigate();
 
+  // Wrap any promise with a timeout so the UI never hangs forever.
+  const withTimeout = <T,>(p: Promise<T>, ms = 12000): Promise<T> =>
+    Promise.race([
+      p,
+      new Promise<T>((_, rej) => setTimeout(() => rej(new Error("timeout")), ms)),
+    ]);
+
   useEffect(() => {
-    supabase.from("app_settings").select("*").then(({ data }) => {
+    let cancelled = false;
+    setLoadError(null);
+    setTimedOut(false);
+    withTimeout(supabase.from("app_settings").select("*").then(({ data, error }) => {
+      if (error) throw error;
       const m: any = {};
       data?.forEach((r: any) => (m[r.key] = r.value));
-      setSettings(m as Settings);
-    });
-  }, []);
+      if (!cancelled) setSettings(m as Settings);
+    }))
+      .catch((e) => { if (!cancelled) setLoadError(e?.message ?? "Failed to load settings"); });
+    return () => { cancelled = true; };
+  }, [reloadKey]);
 
   const loadCounts = async () => {
     if (!user) return;
-    const start = new Date(); start.setUTCHours(0, 0, 0, 0);
-    const [{ data: logs }, { data: ul }, { data: cat }, { data: comp }] = await Promise.all([
-      supabase.from("tasks_log").select("task_type").eq("user_id", user.id).gte("completed_at", start.toISOString()),
-      supabase.from("tile_unlocks").select("tile_id").eq("user_id", user.id),
-      supabase.from("task_catalog").select("*").eq("active", true).order("sort_order"),
-      supabase.from("task_completions").select("catalog_id").eq("user_id", user.id),
-    ]);
-    const counts: Record<string, number> = {};
-    (logs ?? []).forEach((r: any) => { counts[r.task_type] = (counts[r.task_type] ?? 0) + 1; });
-    setTaskCounts(counts);
-    setUnlocks(new Set((ul ?? []).map((r: any) => r.tile_id)));
-    setCatalog(cat ?? []);
-    setCompletions(new Set((comp ?? []).map((r: any) => r.catalog_id)));
+    try {
+      const start = new Date(); start.setUTCHours(0, 0, 0, 0);
+      const [{ data: logs }, { data: ul }, { data: cat }, { data: comp }] = await withTimeout(Promise.all([
+        supabase.from("tasks_log").select("task_type").eq("user_id", user.id).gte("completed_at", start.toISOString()),
+        supabase.from("tile_unlocks").select("tile_id").eq("user_id", user.id),
+        supabase.from("task_catalog").select("*").eq("active", true).order("sort_order"),
+        supabase.from("task_completions").select("catalog_id").eq("user_id", user.id),
+      ]));
+      const counts: Record<string, number> = {};
+      (logs ?? []).forEach((r: any) => { counts[r.task_type] = (counts[r.task_type] ?? 0) + 1; });
+      setTaskCounts(counts);
+      setUnlocks(new Set((ul ?? []).map((r: any) => r.tile_id)));
+      setCatalog(cat ?? []);
+      setCompletions(new Set((comp ?? []).map((r: any) => r.catalog_id)));
+    } catch (e: any) {
+      setLoadError(e?.message ?? "Failed to load activities");
+    }
   };
-  useEffect(() => { loadCounts(); /* eslint-disable-next-line */ }, [user]);
+  useEffect(() => { loadCounts(); /* eslint-disable-next-line */ }, [user, reloadKey]);
+
+  // Hard timeout: if anything is still missing after 15s, surface a retry UI.
+  useEffect(() => {
+    if (profile && settings) { setTimedOut(false); return; }
+    const t = setTimeout(() => setTimedOut(true), 15000);
+    return () => clearTimeout(t);
+  }, [profile, settings, reloadKey]);
+
+  const retry = () => {
+    setSettings(null);
+    setLoadError(null);
+    setTimedOut(false);
+    setReloadKey((k) => k + 1);
+    refresh?.();
+  };
 
   if (loading) return null;
   if (!user) return <Navigate to="/auth" replace />;
+
   if (!profile || !settings) {
-    return <div className="min-h-screen"><Navbar /><div className="container py-20 text-center text-muted-foreground">Loading…</div><BottomNav /></div>;
+    const showError = loadError || timedOut;
+    return (
+      <div className="min-h-dvh">
+        <Navbar />
+        <div className="container py-16 max-w-md text-center">
+          {showError ? (
+            <>
+              <div className="font-display text-2xl font-semibold mb-2">Couldn't load activities</div>
+              <p className="text-sm text-muted-foreground mb-6">
+                {loadError ? "Something went wrong loading your data." : "This is taking longer than expected."} Check your connection and try again.
+              </p>
+              <Button onClick={retry} variant="hero">Retry</Button>
+            </>
+          ) : (
+            <div className="space-y-3 animate-pulse">
+              <div className="h-8 w-40 mx-auto rounded bg-muted/60" />
+              <div className="h-4 w-64 mx-auto rounded bg-muted/40" />
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-8">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="h-28 rounded-xl bg-muted/40" />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+        <BottomNav />
+      </div>
+    );
   }
+
 
   const lvl = String(profile.level);
   const watchReward = settings.task_rewards.watch?.[lvl] ?? 0;
