@@ -19,8 +19,8 @@ export const BottomNav = () => {
     <>
       {/* spacer so content doesn't sit under the bar on mobile */}
       <div className="h-20 md:hidden" aria-hidden />
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 backdrop-blur-xl bg-background/85 border-t border-border/60">
-        <ul className="grid grid-cols-4 h-16">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 w-full max-w-[100vw] z-40 backdrop-blur-xl bg-background/85 border-t border-border/60 pb-[env(safe-area-inset-bottom)]">
+        <ul className="grid grid-cols-4 h-16 w-full">
           {items.map(({ to, icon: Icon, label }) => (
             <li key={to}>
               <NavLink
