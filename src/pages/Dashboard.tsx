@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useAuth, useProfile } from "@/hooks/useAuth";
 import { useCurrency } from "@/hooks/useCurrency";
+import { StatusFallback } from "@/components/StatusFallback";
 import { supabase } from "@/integrations/supabase/client";
 import {
   ArrowUpRight,
@@ -40,7 +41,7 @@ type Settings = {
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
-  const { profile } = useProfile(user?.id);
+  const { profile, loading: profileLoading, refresh } = useProfile(user?.id);
   const { format, meta } = useCurrency();
   const [settings, setSettings] = useState<Settings | null>(null);
   const [showBalance, setShowBalance] = useState(true);
@@ -78,7 +79,22 @@ const Dashboard = () => {
 
   if (loading) return null;
   if (!user) return <Navigate to="/auth" replace />;
-  if (!profile) return <DashboardSkeleton />;
+  if (!profile) {
+    return profileLoading ? (
+      <DashboardSkeleton />
+    ) : (
+      <div className="min-h-screen">
+        <Navbar />
+        <StatusFallback
+          state="error"
+          title="Couldn't load your dashboard"
+          message="We couldn't reach your account right now. Check your connection and try again."
+          onRetry={refresh}
+        />
+        <BottomNav />
+      </div>
+    );
+  }
 
   const lvl = String(profile.level);
   const cap = Number(settings?.daily_earning_caps?.[lvl] ?? 0);

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { withTimeout } from "@/lib/supabaseQuery";
 
 export type Profile = {
   id: string;
@@ -27,13 +28,16 @@ export function useAuth() {
     const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
       setSession(s);
       setUser(s?.user ?? null);
+      setLoading(false);
     });
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       setUser(data.session?.user ?? null);
       setLoading(false);
     });
-    return () => sub.subscription.unsubscribe();
+    // Hard ceiling: never let loading stick on flaky networks.
+    const t = setTimeout(() => setLoading(false), 4000);
+    return () => { sub.subscription.unsubscribe(); clearTimeout(t); };
   }, []);
 
   return { session, user, loading };
@@ -111,9 +115,17 @@ export function useProfile(userId: string | undefined) {
 
   const refresh = async () => {
     if (!userId) { setProfile(null); setLoading(false); return; }
-    const { data } = await supabase.from("profiles").select("*").eq("id", userId).maybeSingle();
-    setProfile(data as Profile | null);
-    setLoading(false);
+    try {
+      const { data } = await withTimeout(
+        supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
+        8000,
+      );
+      setProfile(data as Profile | null);
+    } catch {
+      // Swallow timeouts/network errors — UI shows fallback and can retry.
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { refresh(); /* eslint-disable-next-line */ }, [userId]);

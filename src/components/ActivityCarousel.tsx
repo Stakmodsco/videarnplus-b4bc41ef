@@ -143,7 +143,7 @@ export const ActivityCarousel = () => {
       style={{ contain: "content" }}
     >
       <div
-        className="flex w-max animate-marquee whitespace-nowrap py-2.5 [animation-duration:14s] md:[animation-duration:22s] will-change-transform"
+        className="flex w-max animate-marquee whitespace-nowrap py-2.5 [animation-duration:55s] md:[animation-duration:75s] will-change-transform"
         style={{ transform: "translateZ(0)", backfaceVisibility: "hidden" }}
       >
         {loop.map((it, i) => {
