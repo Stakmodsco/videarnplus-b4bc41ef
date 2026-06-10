@@ -113,22 +113,51 @@ export function useProfile(userId: string | undefined) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Hard timeout + retry: up to 3 attempts, 8s each, short backoff between.
+  // Waits for the auth session to be restored from storage before querying,
+  // otherwise the request goes out with the anon token and RLS hides the row
+  // (the root cause of the post-login "Couldn't load your dashboard" screen).
   const refresh = async () => {
     if (!userId) { setProfile(null); setLoading(false); return; }
+    setLoading(true);
     try {
-      const { data } = await withTimeout(
-        supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
-        8000,
-      );
-      setProfile(data as Profile | null);
-    } catch {
-      // Swallow timeouts/network errors — UI shows fallback and can retry.
+      // Ensure the session token is attached before querying (mobile-safe).
+      try { await withTimeout(supabase.auth.getSession(), 4000); } catch { /* proceed anyway */ }
+
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+          const { data, error } = await withTimeout(
+            supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
+            8000,
+          );
+          if (error) throw error;
+          if (data) { setProfile(data as Profile); return; }
+          // No row — likely token not attached yet; retry after a beat.
+          throw new Error("profile-not-found");
+        } catch {
+          if (attempt < 3) await new Promise((r) => setTimeout(r, 700 * attempt));
+        }
+      }
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => { refresh(); /* eslint-disable-next-line */ }, [userId]);
+
+  // Re-fetch as soon as the session token lands (covers slow mobile restores
+  // where the first fetch raced ahead of auth and got filtered by RLS).
+  useEffect(() => {
+    if (!userId) return;
+    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+        // Fire and forget — never await inside the auth callback.
+        setTimeout(() => { refresh(); }, 0);
+      }
+    });
+    return () => sub.subscription.unsubscribe();
+    // eslint-disable-next-line
+  }, [userId]);
 
   useEffect(() => {
     if (!userId) return;

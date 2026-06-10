@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { ArrowUpRight, BadgeCheck, Banknote } from "lucide-react";
 import { currencyForCountry, formatMoney } from "@/lib/currency";
 
@@ -122,31 +122,81 @@ const ITEMS: Item[] = [
   { kind: "upgrade",    name: "Aleksy Wójcik",    country: "PL", place: "Wrocław",       amount: 50  },
 ];
 
+// Heuristic for low-power phones: few CPU cores or constrained memory.
+const isLowPowerDevice = () => {
+  if (typeof navigator === "undefined") return false;
+  const cores = navigator.hardwareConcurrency ?? 8;
+  const mem = (navigator as any).deviceMemory as number | undefined;
+  return cores <= 4 || (mem !== undefined && mem <= 4);
+};
+
 export const ActivityCarousel = () => {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const reducedMotion = useMemo(
+    () =>
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    [],
+  );
+  const lowPower = useMemo(isLowPowerDevice, []);
+
   // Shuffle once per mount so the order varies between visits.
+  // On low-power devices, render fewer items to cut layout/paint work.
   const shuffled = useMemo(() => {
     const arr = [...ITEMS];
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [arr[i], arr[j]] = [arr[j], arr[i]];
     }
-    return arr;
-  }, []);
+    return lowPower ? arr.slice(0, 30) : arr;
+  }, [lowPower]);
 
   // Duplicate for seamless marquee loop (visual repeat only — names stay unique
   // within the source list).
   const loop = useMemo(() => [...shuffled, ...shuffled], [shuffled]);
 
+  // Pause the animation whenever the marquee is off-screen or the tab is
+  // hidden — zero compositor work when nobody can see it.
+  useEffect(() => {
+    const track = trackRef.current;
+    const container = containerRef.current;
+    if (!track || !container || reducedMotion) return;
+
+    let visible = true;
+    const apply = () => {
+      track.style.animationPlayState =
+        visible && !document.hidden ? "running" : "paused";
+    };
+    const io = new IntersectionObserver(
+      ([entry]) => { visible = entry.isIntersecting; apply(); },
+      { threshold: 0 },
+    );
+    io.observe(container);
+    document.addEventListener("visibilitychange", apply);
+    return () => {
+      io.disconnect();
+      document.removeEventListener("visibilitychange", apply);
+    };
+  }, [reducedMotion]);
+
   return (
     <div
+      ref={containerRef}
       className="w-full bg-primary/10 border-y border-primary/20 overflow-hidden relative"
       style={{ contain: "content" }}
     >
       <div
-        className="flex w-max animate-marquee whitespace-nowrap py-2.5 [animation-duration:55s] md:[animation-duration:75s] will-change-transform"
-        style={{ transform: "translateZ(0)", backfaceVisibility: "hidden" }}
+        ref={trackRef}
+        className={`flex w-max whitespace-nowrap py-2.5 ${
+          reducedMotion
+            ? ""
+            : "animate-marquee [animation-duration:40s] md:[animation-duration:60s] will-change-transform"
+        }`}
+        style={reducedMotion ? undefined : { transform: "translateZ(0)", backfaceVisibility: "hidden" }}
       >
-        {loop.map((it, i) => {
+        {(reducedMotion ? shuffled : loop).map((it, i) => {
           const meta = currencyForCountry(it.country);
           const Icon = it.kind === "withdrawal" ? Banknote : ArrowUpRight;
           return (
