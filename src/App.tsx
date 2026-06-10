@@ -27,6 +27,7 @@ import AccountSecurity from "./pages/AccountSecurity.tsx";
 import { SupportBot } from "@/components/SupportBot";
 import { IdleLogoutGuard } from "@/components/IdleLogoutGuard";
 import { AuthNudgeModal } from "@/components/AuthNudgeModal";
+import { SafeBoundary } from "@/components/SafeBoundary";
 
 const queryClient = new QueryClient();
 
@@ -37,9 +38,9 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <IdleLogoutGuard />
-        <UpgradeNagModal />
-        <AuthNudgeModal />
-        <SupportBot />
+        <SafeBoundary><UpgradeNagModal /></SafeBoundary>
+        <SafeBoundary><AuthNudgeModal /></SafeBoundary>
+        <SafeBoundary><SupportBot /></SafeBoundary>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
