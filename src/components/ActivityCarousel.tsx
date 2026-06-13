@@ -192,7 +192,7 @@ export const ActivityCarousel = () => {
         className={`flex w-max whitespace-nowrap py-2.5 ${
           reducedMotion
             ? ""
-            : "animate-marquee [animation-duration:40s] md:[animation-duration:60s] will-change-transform"
+            : "animate-marquee [animation-duration:80s] md:[animation-duration:120s] will-change-transform"
         }`}
         style={reducedMotion ? undefined : { transform: "translateZ(0)", backfaceVisibility: "hidden" }}
       >
